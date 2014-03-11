@@ -1,6 +1,8 @@
 from tastypie.api import Api
-from blog.utils.module_loading import autodiscover_modules
-#from django.utils.module_loading import autodiscover_modules
+try:
+    from django.utils.module_loading import autodiscover_modules
+except ImportError:
+    from blog.utils.module_loading import autodiscover_modules
 
 
 v1_api = Api(api_name='v1')
