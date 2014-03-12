@@ -6,7 +6,7 @@ from tastypie.authentication import (
     MultiAuthentication)
 from tastypie.resources import ModelResource
 from taggit.models import Tag
-from .models import Article
+from ..models import Article
 
 
 # The user resource from Django Auth

@@ -1,2 +1,3 @@
 /blog/settings/local.py
 /blog/settings/db.sqlite3
+/.ipynb_checkpoints/
