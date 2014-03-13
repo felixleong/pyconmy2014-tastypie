@@ -25,10 +25,15 @@ class UserResource(ModelResource):
 
 # Tag resource for taggit model
 class TagResource(ModelResource):
+    count = fields.IntegerField(readonly=True)
+
     class Meta:
         queryset = Tag.objects.all()
         resource_name = 'tag'
         detail_uri_name = 'slug'
+
+    def dehydrate_count(self, bundle):
+        return bundle.obj.taggit_taggeditem_items.count()
 
 
 class ArticleResource(ModelResource):
@@ -39,13 +44,14 @@ class ArticleResource(ModelResource):
             include_resource_uri = False
 
     author = fields.ForeignKey(AuthorResource, 'author', full=True)
-    # If we prefer to have better API access to the tags, we should be doing
-    # this
-    # tags = fields.ToManyField(TagResource, 'tags')
     tags = fields.ToManyField(TagResource, 'tags')
 
-    def dehydrate_tags(self, bundle):
-        return list(bundle.obj.tags.slugs())
+    #NOTE: If you prefer that it's just a list of tag slug, we can use a custom
+    #      field instead
+    #tags = fields.ToManyField(TagResource, 'tags')
+
+    #def dehydrate_tags(self, bundle):
+        #return list(bundle.obj.tags.slugs())
 
     class Meta:
         queryset = Article.objects.prefetch_related('tags', 'author').all()
@@ -54,8 +60,14 @@ class ArticleResource(ModelResource):
             ApiKeyAuthentication(),
             Authentication())
         detail_uri_name = 'slug'
+        filtering = {
+            'date_published': ['gt', 'gte', 'lt', 'lte']
+        }
 
     def prepend_urls(self):
+        # With this setup, Article.slug fields should never be a number or
+        # named "search". But for the sample project, this restriction is not
+        # implemented yet
         return [
             url(r"^(?P<resource_name>{0})/(?P<pk>\d+){1}$".format(
                 self._meta.resource_name, trailing_slash()),
