@@ -1,0 +1,7 @@
+# To execute iPython Notebook
+Jinja2==2.7.2
+MarkupSafe==0.19
+ipython==1.2.1
+pyzmq==14.0.1
+requests==2.2.1
+tornado==3.2

@@ -1,16 +1,10 @@
 Django==1.6.2
-Jinja2==2.7.2
-MarkupSafe==0.19
 South==0.8.4
 Werkzeug==0.9.4
 django-extensions==1.3.3
 django-taggit==0.11.2
 django-tastypie==0.11.0
 -e git+https://github.com/felixleong/django-tastypie-extendedmodelresource.git@develop#egg=django-tastypie-extendedmodelresource
-ipython==1.2.1
 python-dateutil==2.2
 python-mimeparse==0.1.4
-pyzmq==14.0.1
-requests==2.2.1
 six==1.5.2
-tornado==3.2
