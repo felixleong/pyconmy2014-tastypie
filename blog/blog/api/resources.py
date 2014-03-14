@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.conf.urls import url
+from django.db.models import Q
 #from extendedmodelresource import ExtendedModelResource
 from tastypie.authentication import (
     ApiKeyAuthentication,
@@ -106,3 +107,14 @@ class ArticleResource(ModelResource):
                 self.wrap_view('get_list_search'),
                 name='api_get_list_search'),
         ]
+
+    def get_object_list(self, request):
+        object_list = super(ArticleResource, self).get_object_list(request)
+
+        if request.user is None:
+            return object_list.exclude(
+                ~Q(author=request.user), is_private=True)
+        elif not request.user.is_superuser():
+            return object_list.exclude(is_private=True)
+        else:
+            return object_list
