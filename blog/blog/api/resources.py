@@ -5,10 +5,12 @@ from tastypie.authentication import (
     ApiKeyAuthentication,
     Authentication,
     MultiAuthentication)
+from tastypie.authorization import DjangoAuthorization
 from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.utils import trailing_slash
 from taggit.models import Tag
+from .authorization import ArticleAuthorization
 from ..models import Article
 
 
@@ -21,6 +23,31 @@ class UserResource(ModelResource):
         detail_allowed_methods = ['get', 'put']
         excludes = ['password', 'is_staff', 'is_superuser', 'last_login']
         authentication = ApiKeyAuthentication()
+        authorization = DjangoAuthorization()
+
+    def prepend_urls(self):
+        return [
+            url(r"^(?P<resource_name>{0})/me{1}$".format(
+                self._meta.resource_name, trailing_slash()),
+                self.wrap_view('dispatch_detail_me'),
+                name='api_dispatch_detail_me'),
+        ]
+
+    def dispatch_detail_me(self, request, **kwargs):
+        kwargs[self._meta.detail_uri_name] = 'me'
+        return super(UserResource, self).dispatch_detail(request, **kwargs)
+
+    def get_detail(self, request, **kwargs):
+        if kwargs[self._meta.detail_uri_name] == 'me':
+            kwargs[self._meta.detail_uri_name] = request.user.id
+
+        return super(UserResource, self).get_detail(request, **kwargs)
+
+    def put_detail(self, request, **kwargs):
+        if kwargs[self._meta.detail_uri_name] == 'me':
+            kwargs[self._meta.detail_uri_name] = request.user.id
+
+        return super(UserResource, self).put_detail(request, **kwargs)
 
 
 # Tag resource for taggit model
@@ -59,6 +86,7 @@ class ArticleResource(ModelResource):
         authentication = MultiAuthentication(
             ApiKeyAuthentication(),
             Authentication())
+        authorization = ArticleAuthorization()
         detail_uri_name = 'slug'
         filtering = {
             'date_published': ['gt', 'gte', 'lt', 'lte']

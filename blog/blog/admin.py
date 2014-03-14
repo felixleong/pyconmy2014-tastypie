@@ -7,11 +7,14 @@ from .models import Article
 class ArticleAdmin(admin.ModelAdmin):
     form = ArticleForm
 
-    list_display = ['title', 'author', 'time_created', 'time_published']
+    list_display = [
+        'title', 'author', 'is_private', 'time_created', 'time_published']
     prepopulated_fields = {'slug': ['title']}
     readonly_fields = ['time_created', 'time_modified']
     fieldsets = [
-        [None, {'fields': ['title', 'body', 'tags', 'time_published']}],
+        [None, {
+            'fields': [
+                'title', 'body', 'tags', 'time_published', 'is_private']}],
         [_('Optional Info'), {
             'fields': ['slug', 'summary'],
             'classes': ['collapse']}],
