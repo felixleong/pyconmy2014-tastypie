@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Creating Powerful RESTful APIs with Django-Tastypie &mdash; Creating Powerful RESTful APIs with Django-Tastypie 2014.03.14 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/styles.css" type="text/css" />
+    <link rel="stylesheet" href="_static/slides.css" type="text/css" />
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2014.03.14',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/common.js"></script>
+    <script type="text/javascript" src="_static/slides.js"></script>
+    <script type="text/javascript" src="_static/sync.js"></script>
+    <script type="text/javascript" src="_static/controller.js"></script>
+    <script type="text/javascript" src="_static/init.js"></script>
+    
+    <script type="text/javascript" src="_static/custom.js"></script>
+    
+    <link rel="top" title="Creating Powerful RESTful APIs with Django-Tastypie 2014.03.14 documentation" href="#" /> 
+  </head>
+  <body>
+
+<section
+   id="slide_container"
+   class='slides layout-regular'>
+
+
+  <article class="slide level-1" id="creating-powerful-restful-apis-with-django-tastypie">
+<h1>Creating Powerful RESTful APIs with Django-Tastypie</h1>
+<p><a class="reference external" href="http://twitter.com/felixleong/">Seh Hui Leong</a> <br />
+March 2014, Mini PyCon Malaysia 2014</p>
+<div class="figure">
+<img alt="_images/4687542962_87bdc4f9f0_b.jpg" class="fill" src="_images/4687542962_87bdc4f9f0_b.jpg" />
+<p class="caption">CC-BY-NC-SA <a class="reference external" href="https://flic.kr/p/89dTdf">https://flic.kr/p/89dTdf</a></p>
+</div>
+
+</article>
+<article class="slide level-2" id="act-1-restful-is-awesome">
+<h2>ACT 1: RESTful is AWESOME!</h2>
+<div class="figure">
+<img alt="_images/4960389917_1d0b48f117_b.jpg" class="fill" src="_images/4960389917_1d0b48f117_b.jpg" />
+<p class="caption">CC <a class="reference external" href="http://www.flickr.com/photos/mccun934/4960389917/">http://www.flickr.com/photos/mccun934/4960389917/</a></p>
+</div>
+
+</article>
+<article class="slide level-3" id="rest-what">
+<h3>REST-what?</h3>
+<ul>
+<li><p class="first">REpresentational State Transfer</p>
+</li>
+<li><dl class="first docutils">
+<dt><strong>Paradigm/Infrastructure pattern to designing easy-to-understand APIs</strong></dt>
+<dd><ul class="first last simple">
+<li>Both <strong>machine- and programmer-readable</strong> without convoluted protocols</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Usually called <strong>RESTful</strong> because no one seems to agree what a perfect REST
+service is</p>
+</li>
+</ul>
+
+</article>
+<article class="slide level-3" id="making-the-perfect-bread-and-bacon">
+<h3>Making the Perfect Bread and Bacon</h3>
+<ul class="simple">
+<li>Thinking in <strong>resources</strong></li>
+<li><strong>Uniform Resource Identifier/Locator (URI/URL)</strong></li>
+<li><strong>HTTP</strong>: The perfect <strong>uniform interface</strong></li>
+</ul>
+
+</article>
+<article class="slide level-3" id="http-the-perfect-fit-i">
+<h3>HTTP: The Perfect Fit (I)</h3>
+<p>You can represent CRUD actions using <strong>HTTP verbs</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name"><strong>Create</strong>:</th><td class="field-body">POST</td>
+</tr>
+<tr class="field-even field"><th class="field-name"><strong>Retrieve</strong>:</th><td class="field-body">GET</td>
+</tr>
+<tr class="field-odd field"><th class="field-name"><strong>Update</strong>:</th><td class="field-body">UPDATE</td>
+</tr>
+<tr class="field-even field"><th class="field-name"><strong>Delete</strong>:</th><td class="field-body">DELETE</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+<article class="slide level-3" id="http-the-perfect-fit-ii">
+<h3>HTTP: The Perfect Fit (II)</h3>
+<p>You can get status of your requests using <strong>HTTP status codes</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="89%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>200</td>
+<td>OK</td>
+</tr>
+<tr class="row-odd"><td>201</td>
+<td>Created</td>
+</tr>
+<tr class="row-even"><td>204</td>
+<td>No-Content (i.e. return void)</td>
+</tr>
+<tr class="row-odd"><td>400</td>
+<td>Bad Request</td>
+</tr>
+<tr class="row-even"><td>401</td>
+<td>Unauthorized</td>
+</tr>
+<tr class="row-odd"><td>403</td>
+<td>Forbidden</td>
+</tr>
+<tr class="row-even"><td>404</td>
+<td>Not Found</td>
+</tr>
+<tr class="row-odd"><td>500</td>
+<td>Internal Server Error (OMG BUG!)</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+<article class="slide level-3" id="http-the-perfect-fit-iii">
+<h3>HTTP: The Perfect Fit (III)</h3>
+<p>You can use <strong>HTTP headers</strong> to specify operating parameters of a transaction.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="35%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Request header</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Accept</td>
+<td>Content we want to request</td>
+</tr>
+<tr class="row-odd"><td>Authorization</td>
+<td>Authentication credentials</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Response header</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Status</td>
+<td>Status of the transaction</td>
+</tr>
+<tr class="row-odd"><td>Location</td>
+<td>The destination URI (important for redirects)</td>
+</tr>
+</tbody>
+</table>
+
+</article>
+<article class="slide level-2" id="act-2-hello-world-tastypie">
+<h2>ACT 2: Hello World, Tastypie!</h2>
+<div class="figure">
+<img alt="_images/3294261072_c635d74ce8_o.jpg" class="fill" src="_images/3294261072_c635d74ce8_o.jpg" />
+<p class="caption">CC-BY-NC <a class="reference external" href="https://flic.kr/p/626X3G">https://flic.kr/p/626X3G</a></p>
+</div>
+
+</article>
+<article class="slide level-2" id="act-3-real-world-tastypie-tips-tricks">
+<h2>ACT 3: Real World Tastypie Tips &amp; Tricks</h2>
+<div class="figure">
+<img alt="_images/5650815548_59e3c82b6a_b.jpg" class="fill" src="_images/5650815548_59e3c82b6a_b.jpg" />
+<p class="caption">CC-BY-NC <a class="reference external" href="https://flic.kr/p/9BkUAh">https://flic.kr/p/9BkUAh</a></p>
+</div>
+
+</article>
+<article class="slide level-2" id="finale-you-are-now-smarter">
+<h2>FINALE: You Are Now Smarter!</h2>
+<div class="figure">
+<img alt="_images/6966069023_5512204921_b.jpg" class="fill" src="_images/6966069023_5512204921_b.jpg" />
+<p class="caption">CC-BY <a class="reference external" href="http://www.flickr.com/photos/sylvainkalache/6966069023/">http://www.flickr.com/photos/sylvainkalache/6966069023/</a></p>
+</div>
+
+</article>
+<article class="slide level-3" id="you-have-learned">
+<h3>You Have Learned…</h3>
+<ul class="simple">
+<li>What is RESTful API?</li>
+</ul>
+
+</article>
+<article class="slide level-3" id="gimme-everything">
+<h3>GIMME EVERYTHING!</h3>
+<p><strong>Code, Demo, Presentation</strong></p>
+<p><a class="reference external" href="http://github.com/felixleong/pyconmy2014-tastypie/">http://github.com/felixleong/pyconmy2014-tastypie/</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Email:</th><td class="field-body"><a class="reference external" href="mailto:felixleong&#37;&#52;&#48;gmail&#46;com">felixleong<span>&#64;</span>gmail<span>&#46;</span>com</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Facebook:</th><td class="field-body"><a class="reference external" href="http://facebook.com/leongsh/">http://facebook.com/leongsh/</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Twitter:</th><td class="field-body"><a class="reference external" href="http://twitter.com/felixleong/">http://twitter.com/felixleong/</a></td>
+</tr>
+</tbody>
+</table>
+
+</article>
+<article class="slide level-3" id="references">
+<h3>References</h3>
+<ul>
+<li><dl class="first docutils">
+<dt>Tastypie</dt>
+<dd><ul class="first last simple">
+<li><a class="reference external" href="https://django-tastypie.readthedocs.org/en/latest/">https://django-tastypie.readthedocs.org/en/latest/</a></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Tastypie-ExtendedModelResource</dt>
+<dd><ul class="first last simple">
+<li><a class="reference external" href="https://github.com/felixleong/django-tastypie-extendedmodelresource/">https://github.com/felixleong/django-tastypie-extendedmodelresource/</a></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>My previous talk, RESTful API 101</dt>
+<dd><ul class="first last simple">
+<li><a class="reference external" href="https://github.com/felixleong/wckl_restapi_talk/">https://github.com/felixleong/wckl_restapi_talk/</a></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>REST in Practice, <em>by Jim, Savas and Ian</em> (O'Reilly)</dt>
+<dd><ul class="first last simple">
+<li><a class="reference external" href="http://shop.oreilly.com/product/9780596805838.do">http://shop.oreilly.com/product/9780596805838.do</a></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+
+</article>
+<article class="slide level-3" id="license">
+<h3>License</h3>
+<p>This work is licensed under a <a class="reference external" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</p>
+
+</article>
+
+
+</section>
+
+<section id="slide_notes">
+
+</section>
+
+  </body>
+</html>
