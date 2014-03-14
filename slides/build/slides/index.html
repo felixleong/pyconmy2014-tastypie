@@ -291,8 +291,8 @@ service is</p>
 </div>
 
 </article>
-<article class="slide level-2" id="act-3-real-world-tastypie-tips-tricks">
-<h2>ACT 3: Real World Tastypie Tips &amp; Tricks</h2>
+<article class="slide level-2" id="act-3-building-tastypie-apis-for-the-real-world">
+<h2>ACT 3: Building Tastypie APIs for The Real World</h2>
 <div class="figure">
 <img alt="_images/5650815548_59e3c82b6a_b.jpg" class="fill" src="_images/5650815548_59e3c82b6a_b.jpg" />
 <p class="caption">CC-BY-NC <a class="reference external" href="https://flic.kr/p/9BkUAh">https://flic.kr/p/9BkUAh</a></p>
@@ -351,10 +351,7 @@ service is</p>
     <span class="k">def</span> <span class="nf">get_object_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
         <span class="n">object_list</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ArticleResource</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_object_list</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">object_list</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span>
-                <span class="o">~</span><span class="n">Q</span><span class="p">(</span><span class="n">author</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">),</span> <span class="n">is_private</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_superuser</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_superuser</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">object_list</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">is_private</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">object_list</span>
@@ -457,18 +454,30 @@ useful aggregate fields.</p>
 <h3>Add Filter Based Querying</h3>
 <p>To support GET list filtering based on criteria on fields.</p>
 <p>e.g. /api/v1/article/?title__icontains=malaysia</p>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ArticleResource</span><span class="p">(</span><span class="n">ExtendedModelResource</span><span class="p">):</span>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">tastypie.resources</span> <span class="kn">import</span> <span class="n">ModelResource</span><span class="p">,</span> <span class="n">ALL</span>
+
+<span class="k">class</span> <span class="nc">ArticleResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
         <span class="n">filtering</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="n">ALL</span><span class="p">,</span>
+            <span class="s">&#39;tags&#39;</span><span class="p">:</span> <span class="n">ALL_WITH_RELATIONS</span><span class="p">,</span>
             <span class="s">&#39;date_published&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;gt&#39;</span><span class="p">,</span> <span class="s">&#39;gte&#39;</span><span class="p">,</span> <span class="s">&#39;lt&#39;</span><span class="p">,</span> <span class="s">&#39;lte&#39;</span><span class="p">]</span>
         <span class="p">}</span>
 </pre></div>
 </div>
+<p>Note that ALL (and ALL_WITH_RELATIONS) supports Django ORM query parameters.</p>
 
 </article>
 <article class="slide level-3" id="how-to-make-sure-incoming-data-is-validated">
 <h3>How to Make Sure Incoming Data is Validated?</h3>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">tastypie.validation</span> <span class="kn">import</span> <span class="n">CleanedDataFormValidation</span>
+<span class="kn">from</span> <span class="nn">..forms</span> <span class="kn">import</span> <span class="n">ArticleForm</span>
+
+<span class="k">class</span> <span class="nc">ArticleResource</span><span class="p">(</span><span class="n">ExtendedModelResource</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">validation</span> <span class="o">=</span> <span class="n">CleanedDataFormValidation</span><span class="p">(</span><span class="n">form_class</span><span class="o">=</span><span class="n">ArticleForm</span><span class="p">)</span>
+</pre></div>
+</div>
 
 </article>
 <article class="slide level-3" id="complex-url-representations">
@@ -508,21 +517,40 @@ are your friends</strong> :).</li>
 </div>
 
 </article>
-<article class="slide level-3" id="sorry-state-of-tastypie-caching">
-<h3>Sorry State of Tastypie Caching</h3>
-<ul class="simple">
-<li>Tastypie only supports <strong>queryset caching</strong> and the cached queryset is only
-used for all the <cite>*_detail()</cite> functions (i.e. only applies to queries that
-affect a specific resource)</li>
-<li>In my experience, quite a <strong>significant amount of CPU cycles are wasted on
-serialization.</strong></li>
-<li>You are on your own in caching serialized outputs.</li>
-<li><em>(... not their fault, caching is just hard)</em></li>
+<article class="slide level-3" id="note-on-caching-on-tastypie">
+<h3>Note on Caching on Tastypie</h3>
+<ul>
+<li><dl class="first docutils">
+<dt>Tastypie only supports the following caching strategies:</dt>
+<dd><ul class="first last simple">
+<li><strong>Queryset caching</strong>: the cached queryset is only used for all the
+<cite>*_detail()</cite> functions (i.e. only applies to queries that affect a
+specific resource)</li>
+<li>Client side caching (i.e. setting the Cache-Control HTTP header)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Tastypie doesn't handle caching of serialized output</p>
+</li>
 </ul>
 
 </article>
 <article class="slide level-3" id="caching-serialized-output-on-tastypie">
 <h3>Caching Serialized Output on Tastypie</h3>
+<ul>
+<li><p class="first">Use a caching proxy like <a class="reference external" href="https://www.varnish-cache.org/">Varnish</a></p>
+</li>
+<li><p class="first">Personally have implemented a <a class="reference external" href="http://cdn.oreillystatic.com/en/assets/1/event/27/Accelerate%20your%20Rails%20Site%20with%20Automatic%20Generation-based%20Action%20Caching%20Presentation%201.pdf">Automatic Generation-Based Action Caching</a>
+approach using a class mixin that can be used by a <cite>ModelResource</cite> and
+hooked up <cite>post_save</cite> signals to update the generation count</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>Not included in the sample source :(</em></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
 
 </article>
 <article class="slide level-3" id="tastypie-urlpattern-auto-discovery">

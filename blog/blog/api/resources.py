@@ -1,17 +1,18 @@
 from django.contrib.auth import get_user_model
 from django.conf.urls import url
-from django.db.models import Q
 from extendedmodelresource import ExtendedModelResource
 from tastypie.authentication import (
     ApiKeyAuthentication,
     Authentication,
     MultiAuthentication)
-from tastypie.authorization import DjangoAuthorization
 from tastypie import fields
-from tastypie.resources import ModelResource, ALL
+from tastypie.authorization import DjangoAuthorization
+from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie.utils import trailing_slash
+from tastypie.validation import CleanedDataFormValidation
 from taggit.models import Tag
 from .authorization import ArticleAuthorization
+from ..forms import ArticleForm
 from ..models import Article
 
 
@@ -79,6 +80,7 @@ class TagResource(ModelResource):
         queryset = Tag.objects.all()
         resource_name = 'tag'
         detail_uri_name = 'slug'
+        allowed_methods = ['get']
 
     def dehydrate_count(self, bundle):
         return bundle.obj.taggit_taggeditem_items.count()
@@ -111,8 +113,10 @@ class ArticleResource(ExtendedModelResource):
         detail_uri_name = 'slug'
         filtering = {
             'title': ALL,
+            'tags': ALL_WITH_RELATIONS,
             'date_published': ['gt', 'gte', 'lt', 'lte']
         }
+        validation = CleanedDataFormValidation(form_class=ArticleForm)
 
     def prepend_urls(self):
         # With this setup, Article.slug fields should never be a number
@@ -127,10 +131,14 @@ class ArticleResource(ExtendedModelResource):
     def get_object_list(self, request):
         object_list = super(ArticleResource, self).get_object_list(request)
 
-        if request.user is None:
-            return object_list.exclude(
-                ~Q(author=request.user), is_private=True)
-        elif not request.user.is_superuser():
+        if not request.user.is_superuser:
             return object_list.exclude(is_private=True)
         else:
             return object_list
+
+    def hydrate_author(self, bundle):
+        # Auto-assign the author to the requesting user if it is not supplied
+        if bundle.data.get('author') is None:
+            bundle.obj.author = bundle.request.user
+
+        return bundle

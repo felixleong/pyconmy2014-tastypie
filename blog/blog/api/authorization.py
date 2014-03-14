@@ -25,7 +25,7 @@ class ArticleAuthorization(Authorization):
         if user is None:
             raise Unauthorized('The request requires an authenticated user')
 
-        return bundle.obj.author == user or user.is_superuser()
+        return bundle.obj.author == user or user.is_superuser
 
     # NOTE: The approach to put_list (update list) in Tastypie is by deleting
     #       the existing resource and then recreate them
@@ -35,7 +35,7 @@ class ArticleAuthorization(Authorization):
             raise Unauthorized('The request requires an authenticated user')
 
         for obj in object_list:
-            if obj.author != user and not user.is_superuser():
+            if obj.author != user and not user.is_superuser:
                 raise Unauthorized(
                     'User does not have the permission to update an article '
                     'they are not an author')
@@ -49,7 +49,7 @@ class ArticleAuthorization(Authorization):
 
         try:
             article = self.object_list.get(pk=bundle.obj.id)
-            return article.author == user or user.is_superuser()
+            return article.author == user or user.is_superuser
         except ObjectDoesNotExist:
             return False
 
@@ -61,7 +61,7 @@ class ArticleAuthorization(Authorization):
         allowed = []
 
         for obj in object_list:
-            if obj.author == user or user.is_superuser():
+            if obj.author == user or user.is_superuser:
                 allowed.append(obj)
 
         return allowed
@@ -71,4 +71,4 @@ class ArticleAuthorization(Authorization):
         if user is None:
             raise Unauthorized('The request requires an authenticated user')
 
-        return bundle.obj.author == user or user.is_superuser()
+        return bundle.obj.author == user or user.is_superuser

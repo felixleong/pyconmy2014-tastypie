@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.fields import (
+    AutoSlugField,
     CreationDateTimeField,
     ModificationDateTimeField)
 from taggit.managers import TaggableManager
@@ -18,6 +19,6 @@ class Article(models.Model):
         _('time published'), default=timezone.now())
     time_modified = ModificationDateTimeField(_('time modified'))
     tags = TaggableManager()
-    slug = models.SlugField(_('slug'))
+    slug = AutoSlugField(_('slug'), populate_from='title', editable=True)
     summary = models.TextField(
         _('summary'), default=None, blank=True, null=True)

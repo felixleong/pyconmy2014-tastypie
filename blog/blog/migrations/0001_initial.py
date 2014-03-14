@@ -12,14 +12,14 @@ class Migration(SchemaMigration):
         db.create_table('blog_article', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('title', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], blank=True)),
+            ('author', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, to=orm['auth.User'])),
             ('body', self.gf('django.db.models.fields.TextField')()),
             ('is_private', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('time_created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('time_published', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2014, 3, 13, 0, 0))),
-            ('time_modified', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now, blank=True)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=50)),
-            ('summary', self.gf('django.db.models.fields.TextField')(null=True, default=None, blank=True)),
+            ('time_created', self.gf('django.db.models.fields.DateTimeField')(blank=True, default=datetime.datetime.now)),
+            ('time_published', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2014, 3, 14, 0, 0))),
+            ('time_modified', self.gf('django.db.models.fields.DateTimeField')(blank=True, default=datetime.datetime.now)),
+            ('slug', self.gf('django_extensions.db.fields.AutoSlugField')(blank=True, separator='-', max_length=50, allow_duplicates=False, overwrite=False, populate_from='title')),
+            ('summary', self.gf('django.db.models.fields.TextField')(blank=True, null=True, default=None)),
         ))
         db.send_create_signal('blog', ['Article'])
 
@@ -33,8 +33,8 @@ class Migration(SchemaMigration):
         'auth.group': {
             'Meta': {'object_name': 'Group'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '80', 'unique': 'True'}),
+            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'to': "orm['auth.Permission']", 'symmetrical': 'False'})
         },
         'auth.permission': {
             'Meta': {'object_name': 'Permission', 'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)"},
@@ -46,30 +46,30 @@ class Migration(SchemaMigration):
         'auth.user': {
             'Meta': {'object_name': 'User'},
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'related_name': "'user_set'", 'blank': 'True'}),
+            'email': ('django.db.models.fields.EmailField', [], {'blank': 'True', 'max_length': '75'}),
+            'first_name': ('django.db.models.fields.CharField', [], {'blank': 'True', 'max_length': '30'}),
+            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'blank': 'True', 'symmetrical': 'False', 'related_name': "'user_set'"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
+            'last_name': ('django.db.models.fields.CharField', [], {'blank': 'True', 'max_length': '30'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'related_name': "'user_set'", 'blank': 'True'}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
+            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'blank': 'True', 'symmetrical': 'False', 'related_name': "'user_set'"}),
+            'username': ('django.db.models.fields.CharField', [], {'max_length': '30', 'unique': 'True'})
         },
         'blog.article': {
             'Meta': {'object_name': 'Article'},
-            'author': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']", 'blank': 'True'}),
+            'author': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'to': "orm['auth.User']"}),
             'body': ('django.db.models.fields.TextField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_private': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50'}),
-            'summary': ('django.db.models.fields.TextField', [], {'null': 'True', 'default': 'None', 'blank': 'True'}),
-            'time_created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'time_modified': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now', 'blank': 'True'}),
-            'time_published': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 3, 13, 0, 0)'}),
+            'slug': ('django_extensions.db.fields.AutoSlugField', [], {'blank': 'True', 'separator': "'-'", 'max_length': '50', 'allow_duplicates': 'False', 'overwrite': 'False', 'populate_from': "'title'"}),
+            'summary': ('django.db.models.fields.TextField', [], {'blank': 'True', 'null': 'True', 'default': 'None'}),
+            'time_created': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'default': 'datetime.datetime.now'}),
+            'time_modified': ('django.db.models.fields.DateTimeField', [], {'blank': 'True', 'default': 'datetime.datetime.now'}),
+            'time_published': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2014, 3, 14, 0, 0)'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         'contenttypes.contenttype': {

@@ -1,4 +1,3 @@
-
 .. Creating Powerful RESTful APIs with Django-Tastypie slides file, created by
    hieroglyph-quickstart on Fri Mar 14 15:11:09 2014.
 
@@ -187,8 +186,8 @@ blog/urls.py
         url(r'^api/', include(api.v1_api.urls)),
     )
 
-ACT 3: Real World Tastypie Tips & Tricks
-----------------------------------------
+ACT 3: Building Tastypie APIs for The Real World
+------------------------------------------------
 
 .. figure:: /_static/5650815548_59e3c82b6a_b.jpg
     :class: fill
@@ -251,10 +250,7 @@ _______________________________
         def get_object_list(self, request):
             object_list = super(ArticleResource, self).get_object_list(request)
 
-            if request.user is None:
-                return object_list.exclude(
-                    ~Q(author=request.user), is_private=True)
-            elif not request.user.is_superuser():
+            if not request.user.is_superuser:
                 return object_list.exclude(is_private=True)
             else:
                 return object_list
@@ -363,15 +359,29 @@ e.g. /api/v1/article/?title__icontains=malaysia
 
 .. code:: python
 
-    class ArticleResource(ExtendedModelResource):
+    from tastypie.resources import ModelResource, ALL
+
+    class ArticleResource(ModelResource):
         class Meta:
             filtering = {
                 'title': ALL,
+                'tags': ALL_WITH_RELATIONS,
                 'date_published': ['gt', 'gte', 'lt', 'lte']
             }
 
+Note that ALL (and ALL_WITH_RELATIONS) supports Django ORM query parameters.
+
 How to Make Sure Incoming Data is Validated?
 ____________________________________________
+
+.. code:: python
+
+    from tastypie.validation import CleanedDataFormValidation
+    from ..forms import ArticleForm
+
+    class ArticleResource(ExtendedModelResource):
+        class Meta:
+            validation = CleanedDataFormValidation(form_class=ArticleForm)
 
 Complex URL Representations
 ___________________________
@@ -410,19 +420,27 @@ _____________________________________________
         class Meta:
             queryset = Article.objects.prefetch_related('tags', 'author').all()
 
-Sorry State of Tastypie Caching
-_______________________________
+Note on Caching on Tastypie
+___________________________
 
-- Tastypie only supports **queryset caching** and the cached queryset is only
-  used for all the `\*_detail()` functions (i.e. only applies to queries that
-  affect a specific resource)
-- In my experience, quite a **significant amount of CPU cycles are wasted on
-  serialization.**
-- You are on your own in caching serialized outputs.
-- *(... not their fault, caching is just hard)*
+- Tastypie only supports the following caching strategies:
+    - **Queryset caching**: the cached queryset is only used for all the
+      `\*_detail()` functions (i.e. only applies to queries that affect a
+      specific resource)
+    - Client side caching (i.e. setting the Cache-Control HTTP header)
+- Tastypie doesn't handle caching of serialized output
 
 Caching Serialized Output on Tastypie
 _____________________________________
+
+- Use a caching proxy like `Varnish`_
+- Personally have implemented a `Automatic Generation-Based Action Caching`_
+  approach using a class mixin that can be used by a `ModelResource` and
+  hooked up `post_save` signals to update the generation count
+    - *Not included in the sample source :(*
+
+.. _Varnish: https://www.varnish-cache.org/
+.. _Automatic Generation-Based Action Caching: http://cdn.oreillystatic.com/en/assets/1/event/27/Accelerate%20your%20Rails%20Site%20with%20Automatic%20Generation-based%20Action%20Caching%20Presentation%201.pdf
 
 Tastypie `urlpattern` Auto-discovery
 ____________________________________
