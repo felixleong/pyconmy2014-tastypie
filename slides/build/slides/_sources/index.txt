@@ -97,6 +97,96 @@ ACT 2: Hello World, Tastypie!
 
     CC-BY-NC https://flic.kr/p/626X3G
 
+One Model Only Blog App
+_______________________
+
+.. code:: python
+
+    from django_extensions.db.fields import (
+        CreationDateTimeField,
+        ModificationDateTimeField)
+    from taggit.managers import TaggableManager
+
+    class Article(models.Model):
+        title = models.CharField(max_length=100)
+        author = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True)
+        body = models.TextField()
+        is_private = models.BooleanField(default=False)
+        time_created = CreationDateTimeField()
+        time_published = models.DateTimeField(default=timezone.now())
+        time_modified = ModificationDateTimeField()
+        tags = TaggableManager()
+        slug = models.SlugField()
+        summary = models.TextField(default=None, blank=True, null=True)
+
+API Endpoints
+_____________
+
+All with **CRUD** operations [POST/GET/PUT/DELETE]
+
+- /api/v1/user/
+- /api/v1/user/:id/
+- /api/v1/tag/
+- /api/v1/tag/:id/
+- /api/v1/article/
+- /api/v1/article/:id/
+
+Magic with The Least Lines! #1
+______________________________
+
+blog/blog/api.py
+
+.. code:: python
+
+    from django.contrib.auth import get_user_model
+    from tastypie.resources import ModelResource
+    from taggit.models import Tag
+    from .models import Article
+
+    # The user resource from Django Auth
+    class UserResource(ModelResource):
+        class Meta:
+            queryset = get_user_model().objects.all()
+            resource_name = 'user'
+
+    # Tag resource for taggit model
+    class TagResource(ModelResource):
+        class Meta:
+            queryset = Tag.objects.all()
+            resource_name = 'tag'
+
+Magic with The Least Lines! #2
+______________________________
+
+blog/blog/api.py *(continued)*
+
+.. code:: python
+
+    class ArticleResource(ModelResource):
+        class Meta:
+            queryset = Article.objects.all()
+            resource_name = 'article'
+
+Magic with The Least Lines! #3
+______________________________
+
+blog/urls.py
+
+.. code:: python
+
+    from tastypie.api import Api
+    from blog.api import UserResource, TagResource, ArticleResource
+
+    v1_api = Api(api_name='v1')
+    v1_api.register(UserResource())
+    v1_api.register(TagResource())
+    v1_api.register(ArticleResource())
+
+    urlpatterns = patterns(
+        '',
+        url(r'^api/', include(api.v1_api.urls)),
+    )
+
 ACT 3: Real World Tastypie Tips & Tricks
 ----------------------------------------
 
@@ -104,6 +194,242 @@ ACT 3: Real World Tastypie Tips & Tricks
     :class: fill
 
     CC-BY-NC https://flic.kr/p/9BkUAh
+
+Limit What Data To Show
+_______________________
+
+.. code:: python
+
+    class UserResource(ModelResource):
+        class Meta:
+            excludes = ['password', 'is_staff', 'is_superuser', 'last_login']
+            # ... or do this, if you prefer explicit white-listing instead
+            #fields = ['id', 'first_name', 'last_name']
+
+You Shall Not Pass! *(Authentication)*
+______________________________________ 
+
+.. code:: python
+
+    from tastypie.authentication import (
+        ApiKeyAuthentication,
+        Authentication,
+        MultiAuthentication)
+
+    class UserResource(ExtendedModelResource):
+        class Meta:
+            authentication = ApiKeyAuthentication()
+
+    class ArticleResource(ModelResource):
+        class Meta:
+            authentication = MultiAuthentication(
+                ApiKeyAuthentication(), Authentication())
+
+Supports HTTP-Basic, HTTP-Digest, API key, Session, OAuth 1, or
+`roll out your own <https://django-tastypie.readthedocs.org/en/latest/authentication.html#implementing-your-own-authentication-authorization>`_.
+
+Full CRUD Can Be Dangerous
+__________________________
+
+.. code:: python
+
+    class UserResource(ModelResource):
+        class Meta:
+            # ... Would only allow the retrieval of user listing, and support
+            # the update of user details
+            list_allowed_methods = ['get']
+            detail_allowed_methods = ['get', 'put']
+
+Limit The Dataset To Operate On
+_______________________________
+
+.. code:: python
+
+    from django.db.models import Q
+
+    class ArticleResource(ModelResource):
+        def get_object_list(self, request):
+            object_list = super(ArticleResource, self).get_object_list(request)
+
+            if request.user is None:
+                return object_list.exclude(
+                    ~Q(author=request.user), is_private=True)
+            elif not request.user.is_superuser():
+                return object_list.exclude(is_private=True)
+            else:
+                return object_list
+
+Laying Out Authorization Boundaries
+___________________________________
+
+.. code:: python
+
+    from tastypie.authorization import DjangoAuthorization
+    from .authorization import ArticleAuthorization
+
+    class UserResource(ModelResource):
+        class Meta:
+            # Relies on Django permissions as authorization
+            authorization = DjangoAuthorization()
+
+    class ArticleResource(ExtendedModelResource):
+        class Meta:
+            # We need more fine grain control as we only allow original authors
+            # to edit their own entries
+            authorization = ArticleAuthorization()
+
+**Refer to blog/blog/api/authorization.py** on a sample of how to implement a
+custom authorization handler.
+
+Adding Custom API Endpoints
+___________________________
+
+Adding a convenience endpoint /api/v1/users/me/
+
+.. code:: python
+
+    class UserResource(ModelResource):
+        def prepend_urls(self):
+            return [
+                url(r"^(?P<resource_name>{0})/(?P<{1}>me){2}$".format(
+                    self._meta.resource_name, self._meta.detail_uri_name,
+                    trailing_slash()),
+                    self.wrap_view('dispatch_detail'),
+                    name='api_dispatch_detail'), ]
+
+        def get_detail(self, request, **kwargs):
+            if kwargs.get(self._meta.detail_uri_name) == 'me':
+                kwargs[self._meta.detail_uri_name] = request.user.id
+
+            return super(UserResource, self).get_detail(request, **kwargs)
+
+        def put_detail(self, request, **kwargs):
+            if kwargs[self._meta.detail_uri_name] == 'me':
+                kwargs[self._meta.detail_uri_name] = request.user.id
+
+            return super(UserResource, self).put_detail(request, **kwargs)
+
+Change The Details Identifier Field
+___________________________________
+
+Like slugs instead of IDs? No problem!
+
+.. code:: python
+
+    class TagResource(ModelResource):
+        class Meta:
+            # THERE! So simple!
+            detail_uri_name = 'slug'
+
+Nested Foreign Keys and Related Querysets
+_________________________________________
+
+.. code:: python
+
+    class ArticleResource(ExtendedModelResource):
+        class AuthorResource(ModelResource):
+            class Meta:
+                queryset = get_user_model().objects.all()
+                fields = ['id', 'first_name', 'last_name']
+                include_resource_uri = False
+
+        author = fields.ForeignKey(AuthorResource, 'author', full=True)
+        # We can also reuse our User Resource instead for more data
+        # author = fields.ForeignKey(UserResource, 'author', full=True)
+
+        # Under normal circumstances, only the API resource URI is used
+        tags = fields.ToManyField(TagResource, 'tags')
+
+Adding Custom Fields
+____________________
+
+We can also add custom fields that is not defined in our models. For example,
+useful aggregate fields.
+
+.. code:: python
+
+    class TagResource(ModelResource):
+        count = fields.IntegerField(readonly=True)
+
+        def dehydrate_count(self, bundle):
+            return bundle.obj.taggit_taggeditem_items.count()
+
+Add Filter Based Querying
+_________________________
+
+To support GET list filtering based on criteria on fields.
+
+e.g. /api/v1/article/?title__icontains=malaysia
+
+.. code:: python
+
+    class ArticleResource(ExtendedModelResource):
+        class Meta:
+            filtering = {
+                'title': ALL,
+                'date_published': ['gt', 'gte', 'lt', 'lte']
+            }
+
+How to Make Sure Incoming Data is Validated?
+____________________________________________
+
+Complex URL Representations
+___________________________
+
+- Example: How to query articles written by a user?
+- **/api/v1/article/?author=1** vs. **/api/v1/user/1/article/**
+- Use `django-tastypie-extendedmodelresource`_ 
+
+.. code:: python
+
+    from extendedmodelresource import ExtendedModelResource
+
+    # Inherit from EMR instead...
+    class UserResource(ExtendedModelResource):
+        class Nested:
+            article = fields.ToManyField(
+                'blog.blog.api.ArticleResource', 'article_set')
+
+    # Must also be EMR
+    class ArticleResource(ExtendedModelResource):
+        pass
+
+.. _django-tastypie-extendedmodelresource: https://github.com/felixleong/django-tastypie-extendedmodelresource/
+
+Performance Starts With Queryset Optimization
+_____________________________________________
+
+- Normal ORM optimization tips apply -- **`select_related()` and `prefetch_related`
+  are your friends** :).
+- Whatever you read about DB/ORM optimization, use it. Apply it to
+  `Resource.Meta.queryset` or `Resource.get_object_list`.
+
+.. code:: python
+
+    class ArticleResource(ExtendedModelResource):
+        class Meta:
+            queryset = Article.objects.prefetch_related('tags', 'author').all()
+
+Sorry State of Tastypie Caching
+_______________________________
+
+- Tastypie only supports **queryset caching** and the cached queryset is only
+  used for all the `\*_detail()` functions (i.e. only applies to queries that
+  affect a specific resource)
+- In my experience, quite a **significant amount of CPU cycles are wasted on
+  serialization.**
+- You are on your own in caching serialized outputs.
+- *(... not their fault, caching is just hard)*
+
+Caching Serialized Output on Tastypie
+_____________________________________
+
+Tastypie `urlpattern` Auto-discovery
+____________________________________
+
+- Do it like `django.contrib.auth` -- declare once and forget
+- Refer to **blog/api.py** and **blog/utils/module_loading.py**
+- Django 1.7 will have `django.utils.module_loading.autodiscover_modules`
 
 FINALE: You Are Now Smarter!
 ----------------------------
@@ -116,7 +442,14 @@ FINALE: You Are Now Smarter!
 You Have Learned…
 _________________
 
-- What is RESTful API?
+- What is **RESTful API**?
+- It's **easy to get started** with Tastypie
+- And how to **flesh it out** with real-world constraints:
+    - Basic CRUD restrictions
+    - Adding custom API endpoints
+    - Authentication and authorization
+    - Customizing data fields of resources
+    - Quick optimization wins
 
 GIMME EVERYTHING!
 _________________

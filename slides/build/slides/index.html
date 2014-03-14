@@ -203,12 +203,335 @@ service is</p>
 </div>
 
 </article>
+<article class="slide level-3" id="one-model-only-blog-app">
+<h3>One Model Only Blog App</h3>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django_extensions.db.fields</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CreationDateTimeField</span><span class="p">,</span>
+    <span class="n">ModificationDateTimeField</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">taggit.managers</span> <span class="kn">import</span> <span class="n">TaggableManager</span>
+
+<span class="k">class</span> <span class="nc">Article</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">author</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">AUTH_USER_MODEL</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">is_private</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">time_created</span> <span class="o">=</span> <span class="n">CreationDateTimeField</span><span class="p">()</span>
+    <span class="n">time_published</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+    <span class="n">time_modified</span> <span class="o">=</span> <span class="n">ModificationDateTimeField</span><span class="p">()</span>
+    <span class="n">tags</span> <span class="o">=</span> <span class="n">TaggableManager</span><span class="p">()</span>
+    <span class="n">slug</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SlugField</span><span class="p">()</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-3" id="api-endpoints">
+<h3>API Endpoints</h3>
+<p>All with <strong>CRUD</strong> operations [POST/GET/PUT/DELETE]</p>
+<ul class="simple">
+<li>/api/v1/user/</li>
+<li>/api/v1/user/:id/</li>
+<li>/api/v1/tag/</li>
+<li>/api/v1/tag/:id/</li>
+<li>/api/v1/article/</li>
+<li>/api/v1/article/:id/</li>
+</ul>
+
+</article>
+<article class="slide level-3" id="magic-with-the-least-lines-1">
+<h3>Magic with The Least Lines! #1</h3>
+<p>blog/blog/api.py</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django.contrib.auth</span> <span class="kn">import</span> <span class="n">get_user_model</span>
+<span class="kn">from</span> <span class="nn">tastypie.resources</span> <span class="kn">import</span> <span class="n">ModelResource</span>
+<span class="kn">from</span> <span class="nn">taggit.models</span> <span class="kn">import</span> <span class="n">Tag</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Article</span>
+
+<span class="c"># The user resource from Django Auth</span>
+<span class="k">class</span> <span class="nc">UserResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">queryset</span> <span class="o">=</span> <span class="n">get_user_model</span><span class="p">()</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">resource_name</span> <span class="o">=</span> <span class="s">&#39;user&#39;</span>
+
+<span class="c"># Tag resource for taggit model</span>
+<span class="k">class</span> <span class="nc">TagResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">queryset</span> <span class="o">=</span> <span class="n">Tag</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">resource_name</span> <span class="o">=</span> <span class="s">&#39;tag&#39;</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-3" id="magic-with-the-least-lines-2">
+<h3>Magic with The Least Lines! #2</h3>
+<p>blog/blog/api.py <em>(continued)</em></p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ArticleResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">queryset</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">resource_name</span> <span class="o">=</span> <span class="s">&#39;article&#39;</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-3" id="magic-with-the-least-lines-3">
+<h3>Magic with The Least Lines! #3</h3>
+<p>blog/urls.py</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">tastypie.api</span> <span class="kn">import</span> <span class="n">Api</span>
+<span class="kn">from</span> <span class="nn">blog.api</span> <span class="kn">import</span> <span class="n">UserResource</span><span class="p">,</span> <span class="n">TagResource</span><span class="p">,</span> <span class="n">ArticleResource</span>
+
+<span class="n">v1_api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span><span class="n">api_name</span><span class="o">=</span><span class="s">&#39;v1&#39;</span><span class="p">)</span>
+<span class="n">v1_api</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">UserResource</span><span class="p">())</span>
+<span class="n">v1_api</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">TagResource</span><span class="p">())</span>
+<span class="n">v1_api</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">ArticleResource</span><span class="p">())</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="n">patterns</span><span class="p">(</span>
+    <span class="s">&#39;&#39;</span><span class="p">,</span>
+    <span class="n">url</span><span class="p">(</span><span class="s">r&#39;^api/&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="n">api</span><span class="o">.</span><span class="n">v1_api</span><span class="o">.</span><span class="n">urls</span><span class="p">)),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+
+</article>
 <article class="slide level-2" id="act-3-real-world-tastypie-tips-tricks">
 <h2>ACT 3: Real World Tastypie Tips &amp; Tricks</h2>
 <div class="figure">
 <img alt="_images/5650815548_59e3c82b6a_b.jpg" class="fill" src="_images/5650815548_59e3c82b6a_b.jpg" />
 <p class="caption">CC-BY-NC <a class="reference external" href="https://flic.kr/p/9BkUAh">https://flic.kr/p/9BkUAh</a></p>
 </div>
+
+</article>
+<article class="slide level-3" id="limit-what-data-to-show">
+<h3>Limit What Data To Show</h3>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">UserResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">excludes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;password&#39;</span><span class="p">,</span> <span class="s">&#39;is_staff&#39;</span><span class="p">,</span> <span class="s">&#39;is_superuser&#39;</span><span class="p">,</span> <span class="s">&#39;last_login&#39;</span><span class="p">]</span>
+        <span class="c"># ... or do this, if you prefer explicit white-listing instead</span>
+        <span class="c">#fields = [&#39;id&#39;, &#39;first_name&#39;, &#39;last_name&#39;]</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-3" id="you-shall-not-pass-authentication">
+<h3>You Shall Not Pass! <em>(Authentication)</em></h3>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">tastypie.authentication</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ApiKeyAuthentication</span><span class="p">,</span>
+    <span class="n">Authentication</span><span class="p">,</span>
+    <span class="n">MultiAuthentication</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">UserResource</span><span class="p">(</span><span class="n">ExtendedModelResource</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">authentication</span> <span class="o">=</span> <span class="n">ApiKeyAuthentication</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">ArticleResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">authentication</span> <span class="o">=</span> <span class="n">MultiAuthentication</span><span class="p">(</span>
+            <span class="n">ApiKeyAuthentication</span><span class="p">(),</span> <span class="n">Authentication</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Supports HTTP-Basic, HTTP-Digest, API key, Session, OAuth 1, or
+<a class="reference external" href="https://django-tastypie.readthedocs.org/en/latest/authentication.html#implementing-your-own-authentication-authorization">roll out your own</a>.</p>
+
+</article>
+<article class="slide level-3" id="full-crud-can-be-dangerous">
+<h3>Full CRUD Can Be Dangerous</h3>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">UserResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="c"># ... Would only allow the retrieval of user listing, and support</span>
+        <span class="c"># the update of user details</span>
+        <span class="n">list_allowed_methods</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;get&#39;</span><span class="p">]</span>
+        <span class="n">detail_allowed_methods</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;get&#39;</span><span class="p">,</span> <span class="s">&#39;put&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-3" id="limit-the-dataset-to-operate-on">
+<h3>Limit The Dataset To Operate On</h3>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Q</span>
+
+<span class="k">class</span> <span class="nc">ArticleResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_object_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">object_list</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ArticleResource</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_object_list</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">object_list</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span>
+                <span class="o">~</span><span class="n">Q</span><span class="p">(</span><span class="n">author</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">),</span> <span class="n">is_private</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_superuser</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">object_list</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">is_private</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">object_list</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-3" id="laying-out-authorization-boundaries">
+<h3>Laying Out Authorization Boundaries</h3>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">tastypie.authorization</span> <span class="kn">import</span> <span class="n">DjangoAuthorization</span>
+<span class="kn">from</span> <span class="nn">.authorization</span> <span class="kn">import</span> <span class="n">ArticleAuthorization</span>
+
+<span class="k">class</span> <span class="nc">UserResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="c"># Relies on Django permissions as authorization</span>
+        <span class="n">authorization</span> <span class="o">=</span> <span class="n">DjangoAuthorization</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">ArticleResource</span><span class="p">(</span><span class="n">ExtendedModelResource</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="c"># We need more fine grain control as we only allow original authors</span>
+        <span class="c"># to edit their own entries</span>
+        <span class="n">authorization</span> <span class="o">=</span> <span class="n">ArticleAuthorization</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Refer to blog/blog/api/authorization.py</strong> on a sample of how to implement a
+custom authorization handler.</p>
+
+</article>
+<article class="slide level-3" id="adding-custom-api-endpoints">
+<h3>Adding Custom API Endpoints</h3>
+<p>Adding a convenience endpoint /api/v1/users/me/</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">UserResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">prepend_urls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">url</span><span class="p">(</span><span class="s">r&quot;^(?P&lt;resource_name&gt;{0})/(?P&lt;{1}&gt;me){2}$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">resource_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">detail_uri_name</span><span class="p">,</span>
+                <span class="n">trailing_slash</span><span class="p">()),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">wrap_view</span><span class="p">(</span><span class="s">&#39;dispatch_detail&#39;</span><span class="p">),</span>
+                <span class="n">name</span><span class="o">=</span><span class="s">&#39;api_dispatch_detail&#39;</span><span class="p">),</span> <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_detail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">detail_uri_name</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#39;me&#39;</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">detail_uri_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">UserResource</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_detail</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">put_detail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">detail_uri_name</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;me&#39;</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">detail_uri_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">UserResource</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">put_detail</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-3" id="change-the-details-identifier-field">
+<h3>Change The Details Identifier Field</h3>
+<p>Like slugs instead of IDs? No problem!</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TagResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="c"># THERE! So simple!</span>
+        <span class="n">detail_uri_name</span> <span class="o">=</span> <span class="s">&#39;slug&#39;</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-3" id="nested-foreign-keys-and-related-querysets">
+<h3>Nested Foreign Keys and Related Querysets</h3>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ArticleResource</span><span class="p">(</span><span class="n">ExtendedModelResource</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">AuthorResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+        <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+            <span class="n">queryset</span> <span class="o">=</span> <span class="n">get_user_model</span><span class="p">()</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="s">&#39;first_name&#39;</span><span class="p">,</span> <span class="s">&#39;last_name&#39;</span><span class="p">]</span>
+            <span class="n">include_resource_uri</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="n">author</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">AuthorResource</span><span class="p">,</span> <span class="s">&#39;author&#39;</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="c"># We can also reuse our User Resource instead for more data</span>
+    <span class="c"># author = fields.ForeignKey(UserResource, &#39;author&#39;, full=True)</span>
+
+    <span class="c"># Under normal circumstances, only the API resource URI is used</span>
+    <span class="n">tags</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">ToManyField</span><span class="p">(</span><span class="n">TagResource</span><span class="p">,</span> <span class="s">&#39;tags&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-3" id="adding-custom-fields">
+<h3>Adding Custom Fields</h3>
+<p>We can also add custom fields that is not defined in our models. For example,
+useful aggregate fields.</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TagResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">readonly</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">dehydrate_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">taggit_taggeditem_items</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-3" id="add-filter-based-querying">
+<h3>Add Filter Based Querying</h3>
+<p>To support GET list filtering based on criteria on fields.</p>
+<p>e.g. /api/v1/article/?title__icontains=malaysia</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ArticleResource</span><span class="p">(</span><span class="n">ExtendedModelResource</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">filtering</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="n">ALL</span><span class="p">,</span>
+            <span class="s">&#39;date_published&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;gt&#39;</span><span class="p">,</span> <span class="s">&#39;gte&#39;</span><span class="p">,</span> <span class="s">&#39;lt&#39;</span><span class="p">,</span> <span class="s">&#39;lte&#39;</span><span class="p">]</span>
+        <span class="p">}</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-3" id="how-to-make-sure-incoming-data-is-validated">
+<h3>How to Make Sure Incoming Data is Validated?</h3>
+
+</article>
+<article class="slide level-3" id="complex-url-representations">
+<h3>Complex URL Representations</h3>
+<ul class="simple">
+<li>Example: How to query articles written by a user?</li>
+<li><strong>/api/v1/article/?author=1</strong> vs. <strong>/api/v1/user/1/article/</strong></li>
+<li>Use <a class="reference external" href="https://github.com/felixleong/django-tastypie-extendedmodelresource/">django-tastypie-extendedmodelresource</a></li>
+</ul>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">extendedmodelresource</span> <span class="kn">import</span> <span class="n">ExtendedModelResource</span>
+
+<span class="c"># Inherit from EMR instead...</span>
+<span class="k">class</span> <span class="nc">UserResource</span><span class="p">(</span><span class="n">ExtendedModelResource</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Nested</span><span class="p">:</span>
+        <span class="n">article</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">ToManyField</span><span class="p">(</span>
+            <span class="s">&#39;blog.blog.api.ArticleResource&#39;</span><span class="p">,</span> <span class="s">&#39;article_set&#39;</span><span class="p">)</span>
+
+<span class="c"># Must also be EMR</span>
+<span class="k">class</span> <span class="nc">ArticleResource</span><span class="p">(</span><span class="n">ExtendedModelResource</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-3" id="performance-starts-with-queryset-optimization">
+<h3>Performance Starts With Queryset Optimization</h3>
+<ul class="simple">
+<li>Normal ORM optimization tips apply -- <strong>`select_related()` and `prefetch_related`
+are your friends</strong> :).</li>
+<li>Whatever you read about DB/ORM optimization, use it. Apply it to
+<cite>Resource.Meta.queryset</cite> or <cite>Resource.get_object_list</cite>.</li>
+</ul>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ArticleResource</span><span class="p">(</span><span class="n">ExtendedModelResource</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">queryset</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">prefetch_related</span><span class="p">(</span><span class="s">&#39;tags&#39;</span><span class="p">,</span> <span class="s">&#39;author&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-3" id="sorry-state-of-tastypie-caching">
+<h3>Sorry State of Tastypie Caching</h3>
+<ul class="simple">
+<li>Tastypie only supports <strong>queryset caching</strong> and the cached queryset is only
+used for all the <cite>*_detail()</cite> functions (i.e. only applies to queries that
+affect a specific resource)</li>
+<li>In my experience, quite a <strong>significant amount of CPU cycles are wasted on
+serialization.</strong></li>
+<li>You are on your own in caching serialized outputs.</li>
+<li><em>(... not their fault, caching is just hard)</em></li>
+</ul>
+
+</article>
+<article class="slide level-3" id="caching-serialized-output-on-tastypie">
+<h3>Caching Serialized Output on Tastypie</h3>
+
+</article>
+<article class="slide level-3" id="tastypie-urlpattern-auto-discovery">
+<h3>Tastypie <cite>urlpattern</cite> Auto-discovery</h3>
+<ul class="simple">
+<li>Do it like <cite>django.contrib.auth</cite> -- declare once and forget</li>
+<li>Refer to <strong>blog/api.py</strong> and <strong>blog/utils/module_loading.py</strong></li>
+<li>Django 1.7 will have <cite>django.utils.module_loading.autodiscover_modules</cite></li>
+</ul>
 
 </article>
 <article class="slide level-2" id="finale-you-are-now-smarter">
@@ -221,8 +544,23 @@ service is</p>
 </article>
 <article class="slide level-3" id="you-have-learned">
 <h3>You Have Learned…</h3>
-<ul class="simple">
-<li>What is RESTful API?</li>
+<ul>
+<li><p class="first">What is <strong>RESTful API</strong>?</p>
+</li>
+<li><p class="first">It's <strong>easy to get started</strong> with Tastypie</p>
+</li>
+<li><dl class="first docutils">
+<dt>And how to <strong>flesh it out</strong> with real-world constraints:</dt>
+<dd><ul class="first last simple">
+<li>Basic CRUD restrictions</li>
+<li>Adding custom API endpoints</li>
+<li>Authentication and authorization</li>
+<li>Customizing data fields of resources</li>
+<li>Quick optimization wins</li>
+</ul>
+</dd>
+</dl>
+</li>
 </ul>
 
 </article>

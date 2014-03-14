@@ -8,7 +8,7 @@ from tastypie.authentication import (
     MultiAuthentication)
 from tastypie.authorization import DjangoAuthorization
 from tastypie import fields
-from tastypie.resources import ModelResource
+from tastypie.resources import ModelResource, ALL
 from tastypie.utils import trailing_slash
 from taggit.models import Tag
 from .authorization import ArticleAuthorization
@@ -110,6 +110,7 @@ class ArticleResource(ExtendedModelResource):
         authorization = ArticleAuthorization()
         detail_uri_name = 'slug'
         filtering = {
+            'title': ALL,
             'date_published': ['gt', 'gte', 'lt', 'lte']
         }
 
