@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.conf.urls import url
 from django.db.models import Q
-#from extendedmodelresource import ExtendedModelResource
+from extendedmodelresource import ExtendedModelResource
 from tastypie.authentication import (
     ApiKeyAuthentication,
     Authentication,
@@ -16,7 +16,7 @@ from ..models import Article
 
 
 # The user resource from Django Auth
-class UserResource(ModelResource):
+class UserResource(ExtendedModelResource):
     class Meta:
         queryset = get_user_model().objects.all()
         resource_name = 'user'
@@ -26,20 +26,40 @@ class UserResource(ModelResource):
         authentication = ApiKeyAuthentication()
         authorization = DjangoAuthorization()
 
+    class Nested:
+        article = fields.ToManyField(
+            'blog.blog.api.ArticleResource', 'article_set')
+        # NOTE: If DB optimization is important, you can use the following
+        #       statement instead
+        #article = fields.ToManyField(
+            #'blog.blog.api.ArticleResource',
+            #lambda obj: obj.article_set.prefetch_related('tags', 'author'))
+
     def prepend_urls(self):
         return [
-            url(r"^(?P<resource_name>{0})/me{1}$".format(
-                self._meta.resource_name, trailing_slash()),
-                self.wrap_view('dispatch_detail_me'),
-                name='api_dispatch_detail_me'),
+            url(r"^(?P<resource_name>{0})/(?P<{1}>me){2}$".format(
+                self._meta.resource_name, self._meta.detail_uri_name,
+                trailing_slash()),
+                self.wrap_view('dispatch_detail'),
+                name='api_dispatch_detail'),
+            url(
+                r"^(?P<resource_name>{0})/(?P<{1}>me)/(?P<nested_name>article)"
+                r"{2}$".format(
+                    self._meta.resource_name, self._meta.detail_uri_name,
+                    trailing_slash()),
+                self.wrap_view('dispatch_nested'),
+                name='api_dispatch_nested'),
         ]
 
-    def dispatch_detail_me(self, request, **kwargs):
-        kwargs[self._meta.detail_uri_name] = 'me'
-        return super(UserResource, self).dispatch_detail(request, **kwargs)
+    def dispatch_nested(self, request, **kwargs):
+        self.is_authenticated(request)
+        if kwargs.get(self._meta.detail_uri_name) == 'me':
+            kwargs[self._meta.detail_uri_name] = request.user.id
+
+        return super(UserResource, self).dispatch_nested(request, **kwargs)
 
     def get_detail(self, request, **kwargs):
-        if kwargs[self._meta.detail_uri_name] == 'me':
+        if kwargs.get(self._meta.detail_uri_name) == 'me':
             kwargs[self._meta.detail_uri_name] = request.user.id
 
         return super(UserResource, self).get_detail(request, **kwargs)
@@ -64,7 +84,7 @@ class TagResource(ModelResource):
         return bundle.obj.taggit_taggeditem_items.count()
 
 
-class ArticleResource(ModelResource):
+class ArticleResource(ExtendedModelResource):
     class AuthorResource(ModelResource):
         class Meta:
             queryset = get_user_model().objects.all()
@@ -94,18 +114,13 @@ class ArticleResource(ModelResource):
         }
 
     def prepend_urls(self):
-        # With this setup, Article.slug fields should never be a number or
-        # named "search". But for the sample project, this restriction is not
-        # implemented yet
+        # With this setup, Article.slug fields should never be a number
+        # But for the sample project, this restriction is not implemented yet
         return [
             url(r"^(?P<resource_name>{0})/(?P<pk>\d+){1}$".format(
                 self._meta.resource_name, trailing_slash()),
                 self.wrap_view('dispatch_detail'),
                 name='api_dispatch_detail'),
-            url(r"^(?P<resource_name>{0})/search{1}$".format(
-                self._meta.resource_name, trailing_slash()),
-                self.wrap_view('get_list_search'),
-                name='api_get_list_search'),
         ]
 
     def get_object_list(self, request):
