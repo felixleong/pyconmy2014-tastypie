@@ -51,24 +51,14 @@ class UserResource(ExtendedModelResource):
                 name='api_dispatch_nested'),
         ]
 
-    def dispatch_nested(self, request, **kwargs):
-        self.is_authenticated(request)
+    def obj_get(self, bundle, **kwargs):
         if kwargs.get(self._meta.detail_uri_name) == 'me':
-            kwargs[self._meta.detail_uri_name] = request.user.id
-
-        return super(UserResource, self).dispatch_nested(request, **kwargs)
-
-    def get_detail(self, request, **kwargs):
-        if kwargs.get(self._meta.detail_uri_name) == 'me':
-            kwargs[self._meta.detail_uri_name] = request.user.id
-
-        return super(UserResource, self).get_detail(request, **kwargs)
-
-    def put_detail(self, request, **kwargs):
-        if kwargs[self._meta.detail_uri_name] == 'me':
-            kwargs[self._meta.detail_uri_name] = request.user.id
-
-        return super(UserResource, self).put_detail(request, **kwargs)
+            # We would simply override the query -- since we already hit the
+            # database once anyway
+            bundle.obj = bundle.request.user
+            return bundle.request.user
+        else:
+            return super(UserResource, self).obj_get(bundle, **kwargs)
 
 
 # Tag resource for taggit model

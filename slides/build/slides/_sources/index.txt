@@ -302,17 +302,12 @@ Adding a convenience endpoint /api/v1/users/me/
                     self.wrap_view('dispatch_detail'),
                     name='api_dispatch_detail'), ]
 
-        def get_detail(self, request, **kwargs):
+        def obj_get(self, bundle, **kwargs):
             if kwargs.get(self._meta.detail_uri_name) == 'me':
-                kwargs[self._meta.detail_uri_name] = request.user.id
-
-            return super(UserResource, self).get_detail(request, **kwargs)
-
-        def put_detail(self, request, **kwargs):
-            if kwargs[self._meta.detail_uri_name] == 'me':
-                kwargs[self._meta.detail_uri_name] = request.user.id
-
-            return super(UserResource, self).put_detail(request, **kwargs)
+                bundle.obj = bundle.request.user
+                return bundle.request.user
+            else:
+                return super(UserResource, self).obj_get(bundle, **kwargs)
 
 Change The Details Identifier Field
 ___________________________________
