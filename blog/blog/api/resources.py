@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.conf.urls import url
+from django.db.models import Q
 from extendedmodelresource import ExtendedModelResource
 from tastypie.authentication import (
     ApiKeyAuthentication,
@@ -9,10 +10,8 @@ from tastypie import fields
 from tastypie.authorization import DjangoAuthorization
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie.utils import trailing_slash
-from tastypie.validation import CleanedDataFormValidation
 from taggit.models import Tag
 from .authorization import ArticleAuthorization
-from ..forms import ArticleForm
 from ..models import Article
 
 
@@ -124,7 +123,14 @@ class ArticleResource(ExtendedModelResource):
         object_list = super(ArticleResource, self).get_object_list(request)
 
         if not request.user.is_superuser:
-            return object_list.exclude(is_private=True)
+            if request.user is None:
+                # Anonymous users should only get access to public posts only
+                return object_list.exclude(is_private=True)
+            else:
+                # Actual users will get access to all their posts, but private
+                # articles from other users are out of bounds
+                return object_list.exclude(
+                    ~Q(author=request.user), is_private=True)
         else:
             return object_list
 
