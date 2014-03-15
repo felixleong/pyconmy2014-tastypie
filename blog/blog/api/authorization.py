@@ -49,7 +49,9 @@ class ArticleAuthorization(Authorization):
 
         try:
             article = object_list.get(pk=bundle.obj.id)
-            return article.author == user or user.is_superuser
+            return (
+                (article.author == user and bundle.obj.author == user) or
+                user.is_superuser)
         except ObjectDoesNotExist:
             return False
 
