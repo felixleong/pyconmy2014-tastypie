@@ -48,7 +48,7 @@ class ArticleAuthorization(Authorization):
             raise Unauthorized('The request requires an authenticated user')
 
         try:
-            article = self.object_list.get(pk=bundle.obj.id)
+            article = object_list.get(pk=bundle.obj.id)
             return article.author == user or user.is_superuser
         except ObjectDoesNotExist:
             return False

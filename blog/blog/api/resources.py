@@ -94,14 +94,7 @@ class ArticleResource(ExtendedModelResource):
             include_resource_uri = False
 
     author = fields.ForeignKey(AuthorResource, 'author', full=True)
-    tags = fields.ToManyField(TagResource, 'tags')
-
-    #NOTE: If you prefer that it's just a list of tag slug, we can use a custom
-    #      field instead
-    #tags = fields.ToManyField(TagResource, 'tags')
-
-    #def dehydrate_tags(self, bundle):
-        #return list(bundle.obj.tags.slugs())
+    tags = fields.ListField()
 
     class Meta:
         queryset = Article.objects.prefetch_related('tags', 'author').all()
@@ -116,7 +109,6 @@ class ArticleResource(ExtendedModelResource):
             'tags': ALL_WITH_RELATIONS,
             'date_published': ['gt', 'gte', 'lt', 'lte']
         }
-        validation = CleanedDataFormValidation(form_class=ArticleForm)
 
     def prepend_urls(self):
         # With this setup, Article.slug fields should never be a number
@@ -136,9 +128,34 @@ class ArticleResource(ExtendedModelResource):
         else:
             return object_list
 
+    def obj_create(self, bundle, **kwargs):
+        # Due to the fact that Taggit requires the Article to be created first
+        # before tags has to be attached, we'd have to add the code to create
+        # the tags here as well
+        updated_bundle = super(ArticleResource, self).obj_create(
+            bundle, **kwargs)
+
+        tags = bundle.data.get('tags')
+        if tags is not None:
+            updated_bundle.obj.tags.add(*tags)
+
+        return updated_bundle
+
+    def hydrate_tags(self, bundle):
+        tags = bundle.data.get('tags')
+        if tags is not None and bundle.obj.id is not None:
+            bundle.obj.tags.add(*tags)
+
+        return bundle
+
+    def dehydrate_tags(self, bundle):
+        return list(bundle.obj.tags.slugs())
+
     def hydrate_author(self, bundle):
+        print('Hydrate author', bundle.data)
         # Auto-assign the author to the requesting user if it is not supplied
         if bundle.data.get('author') is None:
-            bundle.obj.author = bundle.request.user
+            bundle.data['author'] = '/api/v1/user/{0}/'.format(
+                bundle.request.user.id)
 
         return bundle

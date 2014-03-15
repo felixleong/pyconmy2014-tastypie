@@ -196,6 +196,7 @@ service is</p>
 <div class="section" id="one-model-only-blog-app">
 <h3>One Model Only Blog App<a class="headerlink" href="#one-model-only-blog-app" title="Permalink to this headline">¶</a></h3>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django_extensions.db.fields</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AutoSlugField</span><span class="p">,</span>
     <span class="n">CreationDateTimeField</span><span class="p">,</span>
     <span class="n">ModificationDateTimeField</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">taggit.managers</span> <span class="kn">import</span> <span class="n">TaggableManager</span>
@@ -209,7 +210,7 @@ service is</p>
     <span class="n">time_published</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
     <span class="n">time_modified</span> <span class="o">=</span> <span class="n">ModificationDateTimeField</span><span class="p">()</span>
     <span class="n">tags</span> <span class="o">=</span> <span class="n">TaggableManager</span><span class="p">()</span>
-    <span class="n">slug</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SlugField</span><span class="p">()</span>
+    <span class="n">slug</span> <span class="o">=</span> <span class="n">AutoSlugField</span><span class="p">(</span><span class="n">prepopulate_from</span><span class="o">=</span><span class="s">&#39;title&#39;</span><span class="p">,</span> <span class="n">editable</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
     <span class="n">summary</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -444,6 +445,7 @@ useful aggregate fields.</p>
 </div>
 <div class="section" id="how-to-make-sure-incoming-data-is-validated">
 <h3>How to Make Sure Incoming Data is Validated?<a class="headerlink" href="#how-to-make-sure-incoming-data-is-validated" title="Permalink to this headline">¶</a></h3>
+<p><em>(Not in sample code &#8211; didn&#8217;t hook things up proper in time)</em></p>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">tastypie.validation</span> <span class="kn">import</span> <span class="n">CleanedDataFormValidation</span>
 <span class="kn">from</span> <span class="nn">..forms</span> <span class="kn">import</span> <span class="n">ArticleForm</span>
 

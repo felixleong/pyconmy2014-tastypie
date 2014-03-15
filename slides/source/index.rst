@@ -102,6 +102,7 @@ _______________________
 .. code:: python
 
     from django_extensions.db.fields import (
+        AutoSlugField,
         CreationDateTimeField,
         ModificationDateTimeField)
     from taggit.managers import TaggableManager
@@ -115,7 +116,7 @@ _______________________
         time_published = models.DateTimeField(default=timezone.now())
         time_modified = ModificationDateTimeField()
         tags = TaggableManager()
-        slug = models.SlugField()
+        slug = AutoSlugField(prepopulate_from='title', editable=True)
         summary = models.TextField(default=None, blank=True, null=True)
 
 API Endpoints
@@ -373,6 +374,8 @@ Note that ALL (and ALL_WITH_RELATIONS) supports Django ORM query parameters.
 
 How to Make Sure Incoming Data is Validated?
 ____________________________________________
+
+*(Not in sample code -- didn't hook things up proper in time)*
 
 .. code:: python
 
