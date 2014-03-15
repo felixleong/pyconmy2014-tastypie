@@ -14,7 +14,7 @@ class ArticleAuthorization(Authorization):
         return True
 
     def create_list(self, object_list, bundle):
-        if bundle.request.user is None:
+        if bundle.request.user.is_anonymous():
             raise Unauthorized('The request requires an authenticated user')
 
         # We assume that the author will be correctly assigned
@@ -22,7 +22,7 @@ class ArticleAuthorization(Authorization):
 
     def create_detail(self, object_list, bundle):
         user = bundle.request.user
-        if user is None:
+        if user.is_anonymous():
             raise Unauthorized('The request requires an authenticated user')
 
         return bundle.obj.author == user or user.is_superuser
@@ -31,7 +31,7 @@ class ArticleAuthorization(Authorization):
     #       the existing resource and then recreate them
     def update_list(self, object_list, bundle):
         user = bundle.request.user
-        if user is None:
+        if user.is_anonymous():
             raise Unauthorized('The request requires an authenticated user')
 
         for obj in object_list:
@@ -44,7 +44,7 @@ class ArticleAuthorization(Authorization):
 
     def update_detail(self, object_list, bundle):
         user = bundle.request.user
-        if user is None:
+        if user.is_anonymous():
             raise Unauthorized('The request requires an authenticated user')
 
         try:
@@ -57,7 +57,7 @@ class ArticleAuthorization(Authorization):
 
     def delete_list(self, object_list, bundle):
         user = bundle.request.user
-        if user is None:
+        if user.is_anonymous():
             raise Unauthorized('The request requires an authenticated user')
 
         allowed = []
@@ -70,7 +70,7 @@ class ArticleAuthorization(Authorization):
 
     def delete_detail(self, object_list, bundle):
         user = bundle.request.user
-        if user is None:
+        if user.is_anonymous():
             raise Unauthorized('The request requires an authenticated user')
 
         return bundle.obj.author == user or user.is_superuser

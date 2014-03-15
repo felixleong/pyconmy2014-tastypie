@@ -123,7 +123,7 @@ class ArticleResource(ExtendedModelResource):
         object_list = super(ArticleResource, self).get_object_list(request)
 
         if not request.user.is_superuser:
-            if request.user is None:
+            if request.user.is_anonymous():
                 # Anonymous users should only get access to public posts only
                 return object_list.exclude(is_private=True)
             else:
@@ -158,10 +158,8 @@ class ArticleResource(ExtendedModelResource):
         return list(bundle.obj.tags.slugs())
 
     def hydrate_author(self, bundle):
-        print('Hydrate author', bundle.data)
         # Auto-assign the author to the requesting user if it is not supplied
         if bundle.data.get('author') is None:
-            bundle.data['author'] = '/api/v1/user/{0}/'.format(
-                bundle.request.user.id)
+            bundle.obj.author = bundle.request.user
 
         return bundle
