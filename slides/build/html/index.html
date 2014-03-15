@@ -1,19 +1,14 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>Creating Powerful RESTful APIs with Django-Tastypie &mdash; Creating Powerful RESTful APIs with Django-Tastypie 2014.03.14 documentation</title>
     
-    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
-    <link rel="stylesheet" href="_static/styles.css" type="text/css" />
-    <link rel="stylesheet" href="_static/slides.css" type="text/css" />
-    
-    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-    
-
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -28,43 +23,44 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/common.js"></script>
-    <script type="text/javascript" src="_static/slides.js"></script>
-    <script type="text/javascript" src="_static/sync.js"></script>
-    <script type="text/javascript" src="_static/controller.js"></script>
-    <script type="text/javascript" src="_static/init.js"></script>
-    
-    <script type="text/javascript" src="_static/custom.js"></script>
-    
     <link rel="top" title="Creating Powerful RESTful APIs with Django-Tastypie 2014.03.14 documentation" href="#" /> 
   </head>
   <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="#">Creating Powerful RESTful APIs with Django-Tastypie 2014.03.14 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
 
-<section
-   id="slide_container"
-   class='slides layout-regular'>
-
-
-  <article class="slide level-1" id="creating-powerful-restful-apis-with-django-tastypie">
-<h1>Creating Powerful RESTful APIs with Django-Tastypie</h1>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="creating-powerful-restful-apis-with-django-tastypie">
+<h1>Creating Powerful RESTful APIs with Django-Tastypie<a class="headerlink" href="#creating-powerful-restful-apis-with-django-tastypie" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference external" href="http://twitter.com/felixleong/">Seh Hui Leong</a> <br />
 March 2014, Mini PyCon Malaysia 2014</p>
 <div class="figure">
 <img alt="_images/4687542962_87bdc4f9f0_b.jpg" class="fill" src="_images/4687542962_87bdc4f9f0_b.jpg" />
 <p class="caption">CC-BY-NC-SA <a class="reference external" href="https://flic.kr/p/89dTdf">https://flic.kr/p/89dTdf</a></p>
 </div>
-
-</article>
-<article class="slide level-2" id="act-1-restful-is-awesome">
-<h2>ACT 1: RESTful is AWESOME!</h2>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<div class="section" id="act-1-restful-is-awesome">
+<h2>ACT 1: RESTful is AWESOME!<a class="headerlink" href="#act-1-restful-is-awesome" title="Permalink to this headline">¶</a></h2>
 <div class="figure">
 <img alt="_images/4960389917_1d0b48f117_b.jpg" class="fill" src="_images/4960389917_1d0b48f117_b.jpg" />
 <p class="caption">CC <a class="reference external" href="http://www.flickr.com/photos/mccun934/4960389917/">http://www.flickr.com/photos/mccun934/4960389917/</a></p>
 </div>
-
-</article>
-<article class="slide level-3" id="rest-what">
-<h3>REST-what?</h3>
+<div class="section" id="rest-what">
+<h3>REST-what?<a class="headerlink" href="#rest-what" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p class="first">REpresentational State Transfer</p>
 </li>
@@ -80,19 +76,17 @@ March 2014, Mini PyCon Malaysia 2014</p>
 service is</p>
 </li>
 </ul>
-
-</article>
-<article class="slide level-3" id="making-the-perfect-bread-and-bacon">
-<h3>Making the Perfect Bread and Bacon</h3>
+</div>
+<div class="section" id="making-the-perfect-bread-and-bacon">
+<h3>Making the Perfect Bread and Bacon<a class="headerlink" href="#making-the-perfect-bread-and-bacon" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>Thinking in <strong>resources</strong></li>
 <li><strong>Uniform Resource Identifier/Locator (URI/URL)</strong></li>
 <li><strong>HTTP</strong>: The perfect <strong>uniform interface</strong></li>
 </ul>
-
-</article>
-<article class="slide level-3" id="http-the-perfect-fit-i">
-<h3>HTTP: The Perfect Fit (I)</h3>
+</div>
+<div class="section" id="http-the-perfect-fit-i">
+<h3>HTTP: The Perfect Fit (I)<a class="headerlink" href="#http-the-perfect-fit-i" title="Permalink to this headline">¶</a></h3>
 <p>You can represent CRUD actions using <strong>HTTP verbs</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -108,10 +102,9 @@ service is</p>
 </tr>
 </tbody>
 </table>
-
-</article>
-<article class="slide level-3" id="http-the-perfect-fit-ii">
-<h3>HTTP: The Perfect Fit (II)</h3>
+</div>
+<div class="section" id="http-the-perfect-fit-ii">
+<h3>HTTP: The Perfect Fit (II)<a class="headerlink" href="#http-the-perfect-fit-ii" title="Permalink to this headline">¶</a></h3>
 <p>You can get status of your requests using <strong>HTTP status codes</strong></p>
 <table border="1" class="docutils">
 <colgroup>
@@ -150,10 +143,9 @@ service is</p>
 </tr>
 </tbody>
 </table>
-
-</article>
-<article class="slide level-3" id="http-the-perfect-fit-iii">
-<h3>HTTP: The Perfect Fit (III)</h3>
+</div>
+<div class="section" id="http-the-perfect-fit-iii">
+<h3>HTTP: The Perfect Fit (III)<a class="headerlink" href="#http-the-perfect-fit-iii" title="Permalink to this headline">¶</a></h3>
 <p>You can use <strong>HTTP headers</strong> to specify operating parameters of a transaction.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -193,18 +185,16 @@ service is</p>
 </tr>
 </tbody>
 </table>
-
-</article>
-<article class="slide level-2" id="act-2-hello-world-tastypie">
-<h2>ACT 2: Hello World, Tastypie!</h2>
+</div>
+</div>
+<div class="section" id="act-2-hello-world-tastypie">
+<h2>ACT 2: Hello World, Tastypie!<a class="headerlink" href="#act-2-hello-world-tastypie" title="Permalink to this headline">¶</a></h2>
 <div class="figure">
 <img alt="_images/3294261072_c635d74ce8_o.jpg" class="fill" src="_images/3294261072_c635d74ce8_o.jpg" />
 <p class="caption">CC-BY-NC <a class="reference external" href="https://flic.kr/p/626X3G">https://flic.kr/p/626X3G</a></p>
 </div>
-
-</article>
-<article class="slide level-3" id="one-model-only-blog-app">
-<h3>One Model Only Blog App</h3>
+<div class="section" id="one-model-only-blog-app">
+<h3>One Model Only Blog App<a class="headerlink" href="#one-model-only-blog-app" title="Permalink to this headline">¶</a></h3>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django_extensions.db.fields</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">CreationDateTimeField</span><span class="p">,</span>
     <span class="n">ModificationDateTimeField</span><span class="p">)</span>
@@ -223,10 +213,9 @@ service is</p>
     <span class="n">summary</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </div>
-
-</article>
-<article class="slide level-3" id="api-endpoints">
-<h3>API Endpoints</h3>
+</div>
+<div class="section" id="api-endpoints">
+<h3>API Endpoints<a class="headerlink" href="#api-endpoints" title="Permalink to this headline">¶</a></h3>
 <p>All with <strong>CRUD</strong> operations [POST/GET/PUT/DELETE]</p>
 <ul class="simple">
 <li>/api/v1/user/</li>
@@ -236,10 +225,9 @@ service is</p>
 <li>/api/v1/article/</li>
 <li>/api/v1/article/:id/</li>
 </ul>
-
-</article>
-<article class="slide level-3" id="magic-with-the-least-lines-1">
-<h3>Magic with The Least Lines! #1</h3>
+</div>
+<div class="section" id="magic-with-the-least-lines-1">
+<h3>Magic with The Least Lines! #1<a class="headerlink" href="#magic-with-the-least-lines-1" title="Permalink to this headline">¶</a></h3>
 <p>blog/blog/api.py</p>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django.contrib.auth</span> <span class="kn">import</span> <span class="n">get_user_model</span>
 <span class="kn">from</span> <span class="nn">tastypie.resources</span> <span class="kn">import</span> <span class="n">ModelResource</span>
@@ -259,10 +247,9 @@ service is</p>
         <span class="n">resource_name</span> <span class="o">=</span> <span class="s">&#39;tag&#39;</span>
 </pre></div>
 </div>
-
-</article>
-<article class="slide level-3" id="magic-with-the-least-lines-2">
-<h3>Magic with The Least Lines! #2</h3>
+</div>
+<div class="section" id="magic-with-the-least-lines-2">
+<h3>Magic with The Least Lines! #2<a class="headerlink" href="#magic-with-the-least-lines-2" title="Permalink to this headline">¶</a></h3>
 <p>blog/blog/api.py <em>(continued)</em></p>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ArticleResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
@@ -270,10 +257,9 @@ service is</p>
         <span class="n">resource_name</span> <span class="o">=</span> <span class="s">&#39;article&#39;</span>
 </pre></div>
 </div>
-
-</article>
-<article class="slide level-3" id="magic-with-the-least-lines-3">
-<h3>Magic with The Least Lines! #3</h3>
+</div>
+<div class="section" id="magic-with-the-least-lines-3">
+<h3>Magic with The Least Lines! #3<a class="headerlink" href="#magic-with-the-least-lines-3" title="Permalink to this headline">¶</a></h3>
 <p>blog/urls.py</p>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">tastypie.api</span> <span class="kn">import</span> <span class="n">Api</span>
 <span class="kn">from</span> <span class="nn">blog.api</span> <span class="kn">import</span> <span class="n">UserResource</span><span class="p">,</span> <span class="n">TagResource</span><span class="p">,</span> <span class="n">ArticleResource</span>
@@ -289,18 +275,16 @@ service is</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-
-</article>
-<article class="slide level-2" id="act-3-building-tastypie-apis-for-the-real-world">
-<h2>ACT 3: Building Tastypie APIs for The Real World</h2>
+</div>
+</div>
+<div class="section" id="act-3-building-tastypie-apis-for-the-real-world">
+<h2>ACT 3: Building Tastypie APIs for The Real World<a class="headerlink" href="#act-3-building-tastypie-apis-for-the-real-world" title="Permalink to this headline">¶</a></h2>
 <div class="figure">
 <img alt="_images/5650815548_59e3c82b6a_b.jpg" class="fill" src="_images/5650815548_59e3c82b6a_b.jpg" />
 <p class="caption">CC-BY-NC <a class="reference external" href="https://flic.kr/p/9BkUAh">https://flic.kr/p/9BkUAh</a></p>
 </div>
-
-</article>
-<article class="slide level-3" id="limit-what-data-to-show">
-<h3>Limit What Data To Show</h3>
+<div class="section" id="limit-what-data-to-show">
+<h3>Limit What Data To Show<a class="headerlink" href="#limit-what-data-to-show" title="Permalink to this headline">¶</a></h3>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">UserResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
         <span class="n">excludes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;password&#39;</span><span class="p">,</span> <span class="s">&#39;is_staff&#39;</span><span class="p">,</span> <span class="s">&#39;is_superuser&#39;</span><span class="p">,</span> <span class="s">&#39;last_login&#39;</span><span class="p">]</span>
@@ -308,10 +292,9 @@ service is</p>
         <span class="c">#fields = [&#39;id&#39;, &#39;first_name&#39;, &#39;last_name&#39;]</span>
 </pre></div>
 </div>
-
-</article>
-<article class="slide level-3" id="you-shall-not-pass-authentication">
-<h3>You Shall Not Pass! <em>(Authentication)</em></h3>
+</div>
+<div class="section" id="you-shall-not-pass-authentication">
+<h3>You Shall Not Pass! <em>(Authentication)</em><a class="headerlink" href="#you-shall-not-pass-authentication" title="Permalink to this headline">¶</a></h3>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">tastypie.authentication</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ApiKeyAuthentication</span><span class="p">,</span>
     <span class="n">Authentication</span><span class="p">,</span>
@@ -329,10 +312,9 @@ service is</p>
 </div>
 <p>Supports HTTP-Basic, HTTP-Digest, API key, Session, OAuth 1, or
 <a class="reference external" href="https://django-tastypie.readthedocs.org/en/latest/authentication.html#implementing-your-own-authentication-authorization">roll out your own</a>.</p>
-
-</article>
-<article class="slide level-3" id="full-crud-can-be-dangerous">
-<h3>Full CRUD Can Be Dangerous</h3>
+</div>
+<div class="section" id="full-crud-can-be-dangerous">
+<h3>Full CRUD Can Be Dangerous<a class="headerlink" href="#full-crud-can-be-dangerous" title="Permalink to this headline">¶</a></h3>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">UserResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
         <span class="c"># ... Would only allow the retrieval of user listing, and support</span>
@@ -341,10 +323,9 @@ service is</p>
         <span class="n">detail_allowed_methods</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;get&#39;</span><span class="p">,</span> <span class="s">&#39;put&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
-
-</article>
-<article class="slide level-3" id="limit-the-dataset-to-operate-on">
-<h3>Limit The Dataset To Operate On</h3>
+</div>
+<div class="section" id="limit-the-dataset-to-operate-on">
+<h3>Limit The Dataset To Operate On<a class="headerlink" href="#limit-the-dataset-to-operate-on" title="Permalink to this headline">¶</a></h3>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Q</span>
 
 <span class="k">class</span> <span class="nc">ArticleResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
@@ -357,10 +338,9 @@ service is</p>
             <span class="k">return</span> <span class="n">object_list</span>
 </pre></div>
 </div>
-
-</article>
-<article class="slide level-3" id="laying-out-authorization-boundaries">
-<h3>Laying Out Authorization Boundaries</h3>
+</div>
+<div class="section" id="laying-out-authorization-boundaries">
+<h3>Laying Out Authorization Boundaries<a class="headerlink" href="#laying-out-authorization-boundaries" title="Permalink to this headline">¶</a></h3>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">tastypie.authorization</span> <span class="kn">import</span> <span class="n">DjangoAuthorization</span>
 <span class="kn">from</span> <span class="nn">.authorization</span> <span class="kn">import</span> <span class="n">ArticleAuthorization</span>
 
@@ -378,10 +358,9 @@ service is</p>
 </div>
 <p><strong>Refer to blog/blog/api/authorization.py</strong> on a sample of how to implement a
 custom authorization handler.</p>
-
-</article>
-<article class="slide level-3" id="adding-custom-api-endpoints">
-<h3>Adding Custom API Endpoints</h3>
+</div>
+<div class="section" id="adding-custom-api-endpoints">
+<h3>Adding Custom API Endpoints<a class="headerlink" href="#adding-custom-api-endpoints" title="Permalink to this headline">¶</a></h3>
 <p>Adding a convenience endpoint /api/v1/users/me/</p>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">UserResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">prepend_urls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -405,10 +384,9 @@ custom authorization handler.</p>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">UserResource</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">put_detail</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
-
-</article>
-<article class="slide level-3" id="change-the-details-identifier-field">
-<h3>Change The Details Identifier Field</h3>
+</div>
+<div class="section" id="change-the-details-identifier-field">
+<h3>Change The Details Identifier Field<a class="headerlink" href="#change-the-details-identifier-field" title="Permalink to this headline">¶</a></h3>
 <p>Like slugs instead of IDs? No problem!</p>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TagResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
@@ -416,10 +394,9 @@ custom authorization handler.</p>
         <span class="n">detail_uri_name</span> <span class="o">=</span> <span class="s">&#39;slug&#39;</span>
 </pre></div>
 </div>
-
-</article>
-<article class="slide level-3" id="nested-foreign-keys-and-related-querysets">
-<h3>Nested Foreign Keys and Related Querysets</h3>
+</div>
+<div class="section" id="nested-foreign-keys-and-related-querysets">
+<h3>Nested Foreign Keys and Related Querysets<a class="headerlink" href="#nested-foreign-keys-and-related-querysets" title="Permalink to this headline">¶</a></h3>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ArticleResource</span><span class="p">(</span><span class="n">ExtendedModelResource</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">AuthorResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
         <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
@@ -435,10 +412,9 @@ custom authorization handler.</p>
     <span class="n">tags</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">ToManyField</span><span class="p">(</span><span class="n">TagResource</span><span class="p">,</span> <span class="s">&#39;tags&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-
-</article>
-<article class="slide level-3" id="adding-custom-fields">
-<h3>Adding Custom Fields</h3>
+</div>
+<div class="section" id="adding-custom-fields">
+<h3>Adding Custom Fields<a class="headerlink" href="#adding-custom-fields" title="Permalink to this headline">¶</a></h3>
 <p>We can also add custom fields that is not defined in our models. For example,
 useful aggregate fields.</p>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TagResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
@@ -448,10 +424,9 @@ useful aggregate fields.</p>
         <span class="k">return</span> <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">taggit_taggeditem_items</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 </pre></div>
 </div>
-
-</article>
-<article class="slide level-3" id="add-filter-based-querying">
-<h3>Add Filter Based Querying</h3>
+</div>
+<div class="section" id="add-filter-based-querying">
+<h3>Add Filter Based Querying<a class="headerlink" href="#add-filter-based-querying" title="Permalink to this headline">¶</a></h3>
 <p>To support GET list filtering based on criteria on fields.</p>
 <p>e.g. /api/v1/article/?title__icontains=malaysia</p>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">tastypie.resources</span> <span class="kn">import</span> <span class="n">ModelResource</span><span class="p">,</span> <span class="n">ALL</span>
@@ -466,10 +441,9 @@ useful aggregate fields.</p>
 </pre></div>
 </div>
 <p>Note that ALL (and ALL_WITH_RELATIONS) supports Django ORM query parameters.</p>
-
-</article>
-<article class="slide level-3" id="how-to-make-sure-incoming-data-is-validated">
-<h3>How to Make Sure Incoming Data is Validated?</h3>
+</div>
+<div class="section" id="how-to-make-sure-incoming-data-is-validated">
+<h3>How to Make Sure Incoming Data is Validated?<a class="headerlink" href="#how-to-make-sure-incoming-data-is-validated" title="Permalink to this headline">¶</a></h3>
 <div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">tastypie.validation</span> <span class="kn">import</span> <span class="n">CleanedDataFormValidation</span>
 <span class="kn">from</span> <span class="nn">..forms</span> <span class="kn">import</span> <span class="n">ArticleForm</span>
 
@@ -478,10 +452,9 @@ useful aggregate fields.</p>
         <span class="n">validation</span> <span class="o">=</span> <span class="n">CleanedDataFormValidation</span><span class="p">(</span><span class="n">form_class</span><span class="o">=</span><span class="n">ArticleForm</span><span class="p">)</span>
 </pre></div>
 </div>
-
-</article>
-<article class="slide level-3" id="complex-url-representations">
-<h3>Complex URL Representations</h3>
+</div>
+<div class="section" id="complex-url-representations">
+<h3>Complex URL Representations<a class="headerlink" href="#complex-url-representations" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>Example: How to query articles written by a user?</li>
 <li><strong>/api/v1/article/?author=1</strong> vs. <strong>/api/v1/user/1/article/</strong></li>
@@ -500,12 +473,11 @@ useful aggregate fields.</p>
     <span class="k">pass</span>
 </pre></div>
 </div>
-
-</article>
-<article class="slide level-3" id="performance-starts-with-queryset-optimization">
-<h3>Performance Starts With Queryset Optimization</h3>
+</div>
+<div class="section" id="performance-starts-with-queryset-optimization">
+<h3>Performance Starts With Queryset Optimization<a class="headerlink" href="#performance-starts-with-queryset-optimization" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>Normal ORM optimization tips apply -- <strong>select_related() and prefetch_related()
+<li>Normal ORM optimization tips apply &#8211; <strong>select_related() and prefetch_related()
 are your friends</strong> :).</li>
 <li>Apply your Django DB/ORM optimization tricks to <tt class="docutils literal"><span class="pre">Resource.Meta.queryset</span></tt> or
 <tt class="docutils literal"><span class="pre">Resource.get_object_list</span></tt>.</li>
@@ -515,33 +487,27 @@ are your friends</strong> :).</li>
         <span class="n">queryset</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">prefetch_related</span><span class="p">(</span><span class="s">&#39;tags&#39;</span><span class="p">,</span> <span class="s">&#39;author&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
 </pre></div>
 </div>
-
-</article>
-<article class="slide level-3" id="note-on-caching-on-tastypie">
-<h3>Note on Caching on Tastypie</h3>
+</div>
+<div class="section" id="note-on-caching-on-tastypie">
+<h3>Note on Caching on Tastypie<a class="headerlink" href="#note-on-caching-on-tastypie" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><dl class="first docutils">
-<dt>Supports:</dt>
-<dd><ul class="first last simple">
-<li><strong>Queryset caching</strong></li>
-<li><strong>Client side caching</strong></li>
+<dt>Tastypie only supports the following caching strategies:</dt>
+<dd><ul class="first simple">
+<li><strong>Queryset caching</strong>: the cached queryset is only used for all the</li>
 </ul>
+<p class="last"><tt class="docutils literal"><span class="pre">\*_detail()</span></tt> functions (i.e. only applies to queries that affect a
+specific resource)
+- <strong>Client side caching</strong> (i.e. setting the Cache-Control HTTP header)</p>
 </dd>
 </dl>
 </li>
-<li><dl class="first docutils">
-<dt>Don't support:</dt>
-<dd><ul class="first last simple">
-<li>Caching of serialized output</li>
-</ul>
-</dd>
-</dl>
+<li><p class="first">Tastypie doesn&#8217;t handle caching of serialized output</p>
 </li>
 </ul>
-
-</article>
-<article class="slide level-3" id="caching-serialized-output-on-tastypie">
-<h3>Caching Serialized Output on Tastypie</h3>
+</div>
+<div class="section" id="caching-serialized-output-on-tastypie">
+<h3>Caching Serialized Output on Tastypie<a class="headerlink" href="#caching-serialized-output-on-tastypie" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p class="first">Use a caching proxy like <a class="reference external" href="https://www.varnish-cache.org/">Varnish</a></p>
 </li>
@@ -551,12 +517,11 @@ hooked up <tt class="docutils literal"><span class="pre">post_save</span></tt> s
 <p><em>(Not included in the sample source :()</em></p>
 </li>
 </ul>
-
-</article>
-<article class="slide level-3" id="tastypie-urlpattern-auto-discovery">
-<h3>Tastypie <tt class="docutils literal"><span class="pre">urlpattern</span></tt> Auto-discovery</h3>
+</div>
+<div class="section" id="tastypie-urlpattern-auto-discovery">
+<h3>Tastypie <tt class="docutils literal"><span class="pre">urlpattern</span></tt> Auto-discovery<a class="headerlink" href="#tastypie-urlpattern-auto-discovery" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>Do it like <tt class="docutils literal"><span class="pre">django.contrib.auth</span></tt> -- declare once and forget</li>
+<li>Do it like <tt class="docutils literal"><span class="pre">django.contrib.auth</span></tt> &#8211; declare once and forget</li>
 <li>Refer to <strong>blog/api.py</strong> and <strong>blog/utils/module_loading.py</strong></li>
 <li>Django 1.7 will have <cite>django.utils.module_loading.autodiscover_modules</cite> <a class="footnote-reference" href="#id2" id="id1">[1]</a></li>
 </ul>
@@ -566,22 +531,20 @@ hooked up <tt class="docutils literal"><span class="pre">post_save</span></tt> s
 <tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Tastypie 0.11 is not compatible with Django 1.7</td></tr>
 </tbody>
 </table>
-
-</article>
-<article class="slide level-2" id="finale-you-are-now-smarter">
-<h2>FINALE: You Are Now Smarter!</h2>
+</div>
+</div>
+<div class="section" id="finale-you-are-now-smarter">
+<h2>FINALE: You Are Now Smarter!<a class="headerlink" href="#finale-you-are-now-smarter" title="Permalink to this headline">¶</a></h2>
 <div class="figure">
 <img alt="_images/6966069023_5512204921_b.jpg" class="fill" src="_images/6966069023_5512204921_b.jpg" />
 <p class="caption">CC-BY <a class="reference external" href="http://www.flickr.com/photos/sylvainkalache/6966069023/">http://www.flickr.com/photos/sylvainkalache/6966069023/</a></p>
 </div>
-
-</article>
-<article class="slide level-3" id="you-have-learned">
-<h3>You Have Learned…</h3>
+<div class="section" id="you-have-learned">
+<h3>You Have Learned…<a class="headerlink" href="#you-have-learned" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><p class="first">What is <strong>RESTful API</strong>?</p>
 </li>
-<li><p class="first">It's <strong>easy to get started</strong> with Tastypie</p>
+<li><p class="first">It&#8217;s <strong>easy to get started</strong> with Tastypie</p>
 </li>
 <li><dl class="first docutils">
 <dt>And how to <strong>flesh it out</strong> with real-world constraints:</dt>
@@ -596,10 +559,9 @@ hooked up <tt class="docutils literal"><span class="pre">post_save</span></tt> s
 </dl>
 </li>
 </ul>
-
-</article>
-<article class="slide level-3" id="gimme-everything">
-<h3>GIMME EVERYTHING!</h3>
+</div>
+<div class="section" id="gimme-everything">
+<h3>GIMME EVERYTHING!<a class="headerlink" href="#gimme-everything" title="Permalink to this headline">¶</a></h3>
 <p><strong>Code, Demo, Presentation</strong></p>
 <p><a class="reference external" href="http://github.com/felixleong/pyconmy2014-tastypie/">http://github.com/felixleong/pyconmy2014-tastypie/</a></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -614,10 +576,9 @@ hooked up <tt class="docutils literal"><span class="pre">post_save</span></tt> s
 </tr>
 </tbody>
 </table>
-
-</article>
-<article class="slide level-3" id="references">
-<h3>References</h3>
+</div>
+<div class="section" id="references">
+<h3>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
 <ul>
 <li><dl class="first docutils">
 <dt>Tastypie</dt>
@@ -644,7 +605,7 @@ hooked up <tt class="docutils literal"><span class="pre">post_save</span></tt> s
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>REST in Practice, <em>by Jim, Savas and Ian</em> (O'Reilly)</dt>
+<dt>REST in Practice, <em>by Jim, Savas and Ian</em> (O&#8217;Reilly)</dt>
 <dd><ul class="first last simple">
 <li><a class="reference external" href="http://shop.oreilly.com/product/9780596805838.do">http://shop.oreilly.com/product/9780596805838.do</a></li>
 </ul>
@@ -652,20 +613,103 @@ hooked up <tt class="docutils literal"><span class="pre">post_save</span></tt> s
 </dl>
 </li>
 </ul>
-
-</article>
-<article class="slide level-3" id="license">
-<h3>License</h3>
+</div>
+<div class="section" id="license">
+<h3>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h3>
 <p>This work is licensed under a <a class="reference external" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</p>
+</div>
+</div>
+</div>
 
-</article>
 
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Creating Powerful RESTful APIs with Django-Tastypie</a><ul>
+<li><a class="reference internal" href="#act-1-restful-is-awesome">ACT 1: RESTful is AWESOME!</a><ul>
+<li><a class="reference internal" href="#rest-what">REST-what?</a></li>
+<li><a class="reference internal" href="#making-the-perfect-bread-and-bacon">Making the Perfect Bread and Bacon</a></li>
+<li><a class="reference internal" href="#http-the-perfect-fit-i">HTTP: The Perfect Fit (I)</a></li>
+<li><a class="reference internal" href="#http-the-perfect-fit-ii">HTTP: The Perfect Fit (II)</a></li>
+<li><a class="reference internal" href="#http-the-perfect-fit-iii">HTTP: The Perfect Fit (III)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#act-2-hello-world-tastypie">ACT 2: Hello World, Tastypie!</a><ul>
+<li><a class="reference internal" href="#one-model-only-blog-app">One Model Only Blog App</a></li>
+<li><a class="reference internal" href="#api-endpoints">API Endpoints</a></li>
+<li><a class="reference internal" href="#magic-with-the-least-lines-1">Magic with The Least Lines! #1</a></li>
+<li><a class="reference internal" href="#magic-with-the-least-lines-2">Magic with The Least Lines! #2</a></li>
+<li><a class="reference internal" href="#magic-with-the-least-lines-3">Magic with The Least Lines! #3</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#act-3-building-tastypie-apis-for-the-real-world">ACT 3: Building Tastypie APIs for The Real World</a><ul>
+<li><a class="reference internal" href="#limit-what-data-to-show">Limit What Data To Show</a></li>
+<li><a class="reference internal" href="#you-shall-not-pass-authentication">You Shall Not Pass! <em>(Authentication)</em></a></li>
+<li><a class="reference internal" href="#full-crud-can-be-dangerous">Full CRUD Can Be Dangerous</a></li>
+<li><a class="reference internal" href="#limit-the-dataset-to-operate-on">Limit The Dataset To Operate On</a></li>
+<li><a class="reference internal" href="#laying-out-authorization-boundaries">Laying Out Authorization Boundaries</a></li>
+<li><a class="reference internal" href="#adding-custom-api-endpoints">Adding Custom API Endpoints</a></li>
+<li><a class="reference internal" href="#change-the-details-identifier-field">Change The Details Identifier Field</a></li>
+<li><a class="reference internal" href="#nested-foreign-keys-and-related-querysets">Nested Foreign Keys and Related Querysets</a></li>
+<li><a class="reference internal" href="#adding-custom-fields">Adding Custom Fields</a></li>
+<li><a class="reference internal" href="#add-filter-based-querying">Add Filter Based Querying</a></li>
+<li><a class="reference internal" href="#how-to-make-sure-incoming-data-is-validated">How to Make Sure Incoming Data is Validated?</a></li>
+<li><a class="reference internal" href="#complex-url-representations">Complex URL Representations</a></li>
+<li><a class="reference internal" href="#performance-starts-with-queryset-optimization">Performance Starts With Queryset Optimization</a></li>
+<li><a class="reference internal" href="#note-on-caching-on-tastypie">Note on Caching on Tastypie</a></li>
+<li><a class="reference internal" href="#caching-serialized-output-on-tastypie">Caching Serialized Output on Tastypie</a></li>
+<li><a class="reference internal" href="#tastypie-urlpattern-auto-discovery">Tastypie <tt class="docutils literal"><span class="pre">urlpattern</span></tt> Auto-discovery</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#finale-you-are-now-smarter">FINALE: You Are Now Smarter!</a><ul>
+<li><a class="reference internal" href="#you-have-learned">You Have Learned…</a></li>
+<li><a class="reference internal" href="#gimme-everything">GIMME EVERYTHING!</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 
-</section>
-
-<section id="slide_notes">
-
-</section>
-
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="#">Creating Powerful RESTful APIs with Django-Tastypie 2014.03.14 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Seh Hui, Leong.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
   </body>
 </html>

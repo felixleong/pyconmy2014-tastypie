@@ -83,3 +83,6 @@
 .slides > article.level-2 th {
     font-weight: 800;
 }
+.slides .footnote, .slides .footnote-reference {
+    display: none;
+}

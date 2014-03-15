@@ -409,10 +409,10 @@ ___________________________
 Performance Starts With Queryset Optimization
 _____________________________________________
 
-- Normal ORM optimization tips apply -- **`select_related()` and `prefetch_related`
+- Normal ORM optimization tips apply -- **select_related() and prefetch_related()
   are your friends** :).
-- Whatever you read about DB/ORM optimization, use it. Apply it to
-  `Resource.Meta.queryset` or `Resource.get_object_list`.
+- Apply your Django DB/ORM optimization tricks to ``Resource.Meta.queryset`` or
+  ``Resource.get_object_list``.
 
 .. code:: python
 
@@ -423,31 +423,44 @@ _____________________________________________
 Note on Caching on Tastypie
 ___________________________
 
-- Tastypie only supports the following caching strategies:
-    - **Queryset caching**: the cached queryset is only used for all the
-      `\*_detail()` functions (i.e. only applies to queries that affect a
-      specific resource)
-    - Client side caching (i.e. setting the Cache-Control HTTP header)
-- Tastypie doesn't handle caching of serialized output
+.. ifslides::
+
+    - Supports: 
+        - **Queryset caching**
+        - **Client side caching**
+    - Don't support:
+        - Caching of serialized output
+
+.. ifnotslides::
+
+    - Tastypie only supports the following caching strategies:
+        - **Queryset caching**: the cached queryset is only used for all the
+        ``\*_detail()`` functions (i.e. only applies to queries that affect a
+        specific resource)
+        - **Client side caching** (i.e. setting the Cache-Control HTTP header)
+    - Tastypie doesn't handle caching of serialized output
 
 Caching Serialized Output on Tastypie
 _____________________________________
 
 - Use a caching proxy like `Varnish`_
 - Personally have implemented a `Automatic Generation-Based Action Caching`_
-  approach using a class mixin that can be used by a `ModelResource` and
-  hooked up `post_save` signals to update the generation count
-    - *Not included in the sample source :(*
+  approach using a class mixin that can be used by a ``ModelResource`` and
+  hooked up ``post_save`` signals to update the generation count.
+
+  *(Not included in the sample source :()*
 
 .. _Varnish: https://www.varnish-cache.org/
 .. _Automatic Generation-Based Action Caching: http://cdn.oreillystatic.com/en/assets/1/event/27/Accelerate%20your%20Rails%20Site%20with%20Automatic%20Generation-based%20Action%20Caching%20Presentation%201.pdf
 
-Tastypie `urlpattern` Auto-discovery
-____________________________________
+Tastypie ``urlpattern`` Auto-discovery
+______________________________________
 
-- Do it like `django.contrib.auth` -- declare once and forget
+- Do it like ``django.contrib.auth`` -- declare once and forget
 - Refer to **blog/api.py** and **blog/utils/module_loading.py**
-- Django 1.7 will have `django.utils.module_loading.autodiscover_modules`
+- Django 1.7 will have `django.utils.module_loading.autodiscover_modules` [1]_
+
+.. [1] Tastypie 0.11 is not compatible with Django 1.7
 
 FINALE: You Are Now Smarter!
 ----------------------------
